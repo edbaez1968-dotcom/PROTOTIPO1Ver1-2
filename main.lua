@@ -1,13 +1,22 @@
+-- Importar el módulo del escenario
+require("escenario")
+
 function love.load()
     -- 1. Configuración del Escenario / Ventana
     ventana = {
         ancho = 160,
-        alto = 200,
+        alto = 180,
         escala = 4
     }
 
     love.window.setMode(ventana.ancho * ventana.escala, ventana.alto * ventana.escala)
     love.graphics.setDefaultFilter("nearest", "nearest")
+
+    -- Inicializar mundo físico para el escenario
+    world = love.physics.newWorld(0, 0, true)
+
+    -- Crear las estructuras del escenario (definido en escenario.lua)
+    CrearEscenario()
 
     -- Canvas para escalar todos los elementos manteniendo Pixel Art nítido
     canvas = love.graphics.newCanvas(ventana.ancho, ventana.alto)
@@ -37,7 +46,7 @@ function love.load()
         velocidad = 30,
         hitboxX = 0,
         hitboxY = 0,
-        sprite = love.graphics.newImage("img/M1_16x16.png")
+        sprite = love.graphics.newImage("img/Ogro16x16.png")
     }
     enemigo.ancho = enemigo.sprite:getWidth()
     enemigo.alto = enemigo.sprite:getHeight()
@@ -70,6 +79,9 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
+    -- Actualizar mundo físico (escenario)
+    world:update(dt)
+
     -- MOVIMIENTO DEL JUGADOR (Top-Down de 4 direcciones excluyentes)
     if love.keyboard.isDown("right") or love.keyboard.isDown("d") then
         jugador.x = jugador.x + jugador.velocidad * dt
@@ -118,7 +130,10 @@ function love.draw()
     love.graphics.setCanvas(canvas)
     love.graphics.clear()
 
-    -- Dibujar Jugador
+    -- 1. Dibujar el Escenario (Estructuras de escenario.lua)
+    DibujarEscenario()
+
+    -- 2. Dibujar Jugador
     love.graphics.draw(
         jugador.sprite,
         redondear(jugador.x),
@@ -128,7 +143,7 @@ function love.draw()
         jugador.origenY
     )
 
-    -- Dibujar Enemigo
+    -- 3. Dibujar Enemigo
     love.graphics.draw(
         enemigo.sprite,
         redondear(enemigo.x),
@@ -142,7 +157,7 @@ function love.draw()
     if depurar then
         love.graphics.setColor(0, 1, 0) -- Verde para depuración
 
-        -- Hitboxes
+        -- Hitboxes del Jugador y Enemigo
         love.graphics.rectangle("line", jugador.hitboxX, jugador.hitboxY, jugador.ancho, jugador.alto)
         love.graphics.rectangle("line", enemigo.hitboxX, enemigo.hitboxY, enemigo.ancho, enemigo.alto)
 
