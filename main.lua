@@ -1,7 +1,23 @@
 -- Importar el módulo del escenario
 require("escenario")
-
+ 
 function love.load()
+    
+   ataque={
+        spritesheet = nil, -- love.graphics.newImage("img/Giro2.png"),
+        indice = 1 , -- Corregido el nombre de la variable (antes indicae)
+        quads = {}, -- Cambiado a plural para almacenar la lista     
+       
+        activado = false 
+   }
+   aura={
+        spritesheet = nil, 
+        indice = 1 , -- Corregido el nombre de la variable (antes indicae)
+        quads = {}, -- Cambiado a plural para almacenar la lista     
+        
+        activado = false 
+   }
+    
     -- 1. Configuración del Escenario / Ventana
     ventana = {
         ancho = 160,
@@ -28,7 +44,12 @@ function love.load()
         velocidad = 50,
         hitboxX = 0,
         hitboxY = 0,
-        sprite = love.graphics.newImage("img/Duende.png")
+        sprite = love.graphics.newImage("img/Duende.png"),
+        correr={
+            quads={},
+            indice=1,
+            activado=true
+        }
     }
     jugador.ancho = jugador.sprite:getWidth()
     jugador.alto = jugador.sprite:getHeight()
@@ -38,7 +59,23 @@ function love.load()
     -- Posicionar al jugador en el centro del escenario
     jugador.x = ventana.ancho / 2
     jugador.y = ventana.alto / 2
-
+    ataque.spritesheet =  love.graphics.newImage("img/Giro2.png")
+    aura.spritesheet =  love.graphics.newImage("img/EnemigoGiro.png")
+    jugador.spritesheet =  love.graphics.newImage("img/spritesheet.png")
+    
+    -- Creación de quads para la animación
+    ataque.quad= love.graphics.newQuad(0,0,16,16,ataque.spritesheet)
+    aura.quad= love.graphics.newQuad(0,0,16,16,aura.spritesheet)
+    for i = 0, 3 do
+        table.insert(ataque.quads, love.graphics.newQuad(16 * i, 0, 16, 16, ataque.spritesheet:getDimensions()))
+    end
+     for i = 0, 3 do
+        table.insert(aura.quads, love.graphics.newQuad(16 * i, 0, 16, 16, ataque.spritesheet:getDimensions()))
+    end
+    for i = 0, 4 do
+        table.insert(jugador.correr.quads, love.graphics.newQuad(0,19 * i,  17, 19, jugador.spritesheet:getDimensions()))
+    end
+    
     -- 3. Creación del Enemigo (Tabla)
     enemigo = {
         x = 20,
@@ -75,6 +112,8 @@ function love.keypressed(key)
     -- Activar / Desactivar modo Depuración con F1
     if key == "f1" then
         depurar = not depurar
+    elseif key == "space" and not ataque.activado then
+        ataque.activado= true
     end
 end
 
@@ -111,7 +150,31 @@ function love.update(dt)
             enemigo.y = enemigo.y - enemigo.velocidad * dt
         end
     end
-
+    -- Dibujo animación
+    if ataque.activado then
+     ataque.indice = ataque.indice +(10 * dt)
+        if ataque.indice >= #ataque.quads + 1 then
+            ataque.indice = 1
+            ataque.activado= false
+        end   
+    end
+    -- Dibujo animación enemigo
+    if aura.activado then
+     aura.indice = aura.indice +(7 * dt)
+        if aura.indice >= #aura.quads + 1 then
+            aura.indice = 1
+            aura.activado= false
+        end   
+    end
+    -- Dibujo animación correr duende
+    if jugador.correr.activado then
+     jugador.correr.indice = jugador.correr.indice +(7 * dt)
+        if jugador.correr.indice >= #jugador.correr.quads + 1 then
+            jugador.correr.indice = 1
+            -- aura.activado= false
+        end   
+    end
+    
     -- ACTUALIZACIÓN DE HITBOXES (Ajustados según el punto de origen)
     jugador.hitboxX = jugador.x - jugador.origenX
     jugador.hitboxY = jugador.y - jugador.origenY
@@ -123,6 +186,12 @@ function love.update(dt)
         jugador.hitboxX, jugador.hitboxY, jugador.ancho, jugador.alto,
         enemigo.hitboxX, enemigo.hitboxY, enemigo.ancho, enemigo.alto
     )
+    -- Activar aura
+    if atrapado then
+        aura.activado=false
+       else
+        aura.activado=true
+    end
 end
 
 function love.draw()
@@ -134,15 +203,21 @@ function love.draw()
     DibujarEscenario()
 
     -- 2. Dibujar Jugador
-    love.graphics.draw(
-        jugador.sprite,
-        redondear(jugador.x),
-        redondear(jugador.y),
-        0, 1, 1,
-        jugador.origenX,
-        jugador.origenY
-    )
-
+    
+    if jugador.correr.activado then
+        local i= math.floor(jugador.correr.indice)
+        love.graphics.draw(jugador.spritesheet,jugador.correr.quads[i],jugador.x,jugador.y,0,1,1,jugador.origenX+3,jugador.origenY+3)  
+    end
+    
+    if ataque.activado then
+        local i =math.floor(ataque.indice)
+        love.graphics.draw(ataque.spritesheet,ataque.quads[i],jugador.x,jugador.y,0,1,1,jugador.origenX+3,jugador.origenY+3)  
+    end
+    if aura.activado then
+        local i =math.floor(aura.indice)
+        love.graphics.draw(aura.spritesheet,aura.quads[i],enemigo.x,enemigo.y,0,1,1,enemigo.origenX+3,enemigo.origenY+3)  
+    end
+    
     -- 3. Dibujar Enemigo
     love.graphics.draw(
         enemigo.sprite,
