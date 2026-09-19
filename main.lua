@@ -1,23 +1,12 @@
 -- Importar el módulo del escenario
 require("escenario")
+require("animaciones")
  
 function love.load()
     
-   ataque={
-        spritesheet = nil, -- love.graphics.newImage("img/Giro2.png"),
-        indice = 1 , -- Corregido el nombre de la variable (antes indicae)
-        quads = {}, -- Cambiado a plural para almacenar la lista     
-       
-        activado = false 
-   }
-   aura={
-        spritesheet = nil, 
-        indice = 1 , -- Corregido el nombre de la variable (antes indicae)
-        quads = {}, -- Cambiado a plural para almacenar la lista     
-        
-        activado = false 
-   }
-    
+   
+    ataque=nil
+    aura=nil
     -- 1. Configuración del Escenario / Ventana
     ventana = {
         ancho = 160,
@@ -44,37 +33,35 @@ function love.load()
         velocidad = 50,
         hitboxX = 0,
         hitboxY = 0,
-        sprite = love.graphics.newImage("img/Duende.png"),
-        correr={
-            quads={},
-            indice=1,
-            activado=true
-        }
+        correr = nil,
+        ancho = 16,
+        alto = 16,
+        origenX = 8,
+        origenY = 8
     }
-    jugador.ancho = jugador.sprite:getWidth()
-    jugador.alto = jugador.sprite:getHeight()
+    
+    -- Creación de quads para la animación
+    -- Creación de quads para la animación
+   
+    aura = CrearAnimacion("img/EnemigoGiro.png", 3, 16, 16, 12, false)
+    jugador.correr = CrearAnimacion("img/spritesheet.png", 4, 17, 19, 12, true)
+ ataque = CrearAnimacion("img/Giro2.png", 3, 16, 16, 12, false)
+    -- Para obtener el ancho/alto de un fotograma individual de la animación (16x16):
+    jugador.ancho = 16
+    jugador.alto = 16
     jugador.origenX = jugador.ancho / 2
     jugador.origenY = jugador.alto / 2
-
     -- Posicionar al jugador en el centro del escenario
     jugador.x = ventana.ancho / 2
     jugador.y = ventana.alto / 2
-    ataque.spritesheet =  love.graphics.newImage("img/Giro2.png")
-    aura.spritesheet =  love.graphics.newImage("img/EnemigoGiro.png")
-    jugador.spritesheet =  love.graphics.newImage("img/spritesheet.png")
     
-    -- Creación de quads para la animación
-    ataque.quad= love.graphics.newQuad(0,0,16,16,ataque.spritesheet)
-    aura.quad= love.graphics.newQuad(0,0,16,16,aura.spritesheet)
-    for i = 0, 3 do
-        table.insert(ataque.quads, love.graphics.newQuad(16 * i, 0, 16, 16, ataque.spritesheet:getDimensions()))
-    end
-     for i = 0, 3 do
-        table.insert(aura.quads, love.graphics.newQuad(16 * i, 0, 16, 16, ataque.spritesheet:getDimensions()))
-    end
-    for i = 0, 4 do
-        table.insert(jugador.correr.quads, love.graphics.newQuad(0,19 * i,  17, 19, jugador.spritesheet:getDimensions()))
-    end
+    
+    ataque.activado=false
+    -- jugador.correr.activado = true
+    -- ataque.quad= love.graphics.newQuad(0,0,16,16,ataque.spritesheet)
+    -- aura.quad= love.graphics.newQuad(0,0,16,16,aura.spritesheet)
+    
+    
     
     -- 3. Creación del Enemigo (Tabla)
     enemigo = {
@@ -206,7 +193,7 @@ function love.draw()
     
     if jugador.correr.activado then
         local i= math.floor(jugador.correr.indice)
-        love.graphics.draw(jugador.spritesheet,jugador.correr.quads[i],jugador.x,jugador.y,0,1,1,jugador.origenX+3,jugador.origenY+3)  
+        love.graphics.draw(jugador.correr.spritesheet,jugador.correr.quads[i],jugador.x,jugador.y,0,1,1,jugador.origenX+3,jugador.origenY+3)  
     end
     
     if ataque.activado then
