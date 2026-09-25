@@ -61,8 +61,8 @@ function CrearEscenario()
     hongo_izq = Estructuras:Nuevo(math.random(20, ancho / 2 - 10), math.random(30, alto - 50), "img/HongoGigante.png", tag_hongo, 1, 1)
     hongo_der = Estructuras:Nuevo(math.random(ancho / 2 + 10, ancho - 20), math.random(30, alto - 50), "img/HongoGigante.png", tag_hongo, 1, 1)
     -- Moneadas de plata y oro
-    moneda_plata = Estructuras:Nuevo(math.random(50, ancho / 2 - 10), math.random(100, alto - 50), "img/monedaPlata16x16.png", tag_hongo,  0.45,  0.45)
-    moneda_oro = Estructuras:Nuevo(math.random(ancho / 2 + 10, ancho - 20), math.random(70, alto - 30), "img/MonedaOro16x16.png", tag_hongo,0.45,  0.45)
+     moneda_plata = Estructuras:Nuevo(math.random(50, ancho / 2 - 10), math.random(100, alto - 50), "img/monedaPlata16x16.png", tag_hongo,  0.45,  0.45)
+    -- moneda_oro = Estructuras:Nuevo(math.random(ancho / 2 + 10, ancho - 20), math.random(70, alto - 30), "img/MonedaOro16x16.png", tag_hongo,0.45,  0.45)
 end
 
 function DibujarEscenario()
@@ -80,5 +80,5 @@ function DibujarEscenario()
     hongo_der:DibujarEstructura()
 
     moneda_plata:DibujarEstructura()
-    moneda_oro:DibujarEstructura()
+    -- moneda_oro:DibujarEstructura()
 end
