@@ -1,5 +1,5 @@
 -- enemigo.lua
-Class =require 'class'
+-- Class =require 'class'
 Enemigo = Class{}
 -- Constructor function to create a nuevo 
 function Enemigo:init(x, y,img, v)

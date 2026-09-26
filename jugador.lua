@@ -1,5 +1,5 @@
 -- Jugador.lua
-Class =require 'class'
+-- Class =require 'class'
 -- Jugador = {}
 -- Jugador.__index = Jugador
 Jugador = Class{}

@@ -1,5 +1,5 @@
 -- Moneda.lua
-Class =require 'class'
+-- Class =require 'class'
 Moneda = Class{}
 -- Constructor function to create a nuevo 
 function Moneda:init(x, y,img, v)

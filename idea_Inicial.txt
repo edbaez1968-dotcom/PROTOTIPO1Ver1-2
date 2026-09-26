@@ -16,6 +16,6 @@ El escenario será un bosque mágico con árboles gigantes, hongos luminosos y r
 
 Nueva Version 1.2: "El Duende del Bosque Mágico"
 Concepto: Un duende vive en un bosque encantado donde un Ogro lo persigue.
-Debe escapar del Ogro mientas encuentra un par de monedas ocultas.
+Debe escapar del Ogro mientas encuentra un par de monedas de oro que se mueven.
 El escenario será un bosque mágico con árboles Piedras, hongos luminosos y ramas flotantes.
  . 
