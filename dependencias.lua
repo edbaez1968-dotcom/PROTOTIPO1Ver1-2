@@ -1,5 +1,6 @@
 -- Incluye librería para manejar clase
 Class = require 'lib.class'
+STI = require 'lib.sti'
 
 -- Importar Clases
 require "jugador"

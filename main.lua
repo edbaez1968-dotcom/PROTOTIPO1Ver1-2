@@ -1,9 +1,9 @@
 
 require("dependencias")
-ventana = {
+ventana = { -- 192,208
     ancho = 160,
-    alto = 180,
-    escala = 4
+    alto = 170,
+    escala = 2
 }
 
 miFuentePequena = love.graphics.newFont(10)
@@ -32,6 +32,7 @@ function love.load()
     -- Variables del Sistema de Depuración y Colisión
     depurar = false
     atrapado = false
+    mapa = nil
     
     -- estado= EstadoTitulo("El duende")
     MaquinaEstadoGlobal= MaquinaEstado{
@@ -42,6 +43,7 @@ function love.load()
          
     }
     MaquinaEstadoGlobal:cambiar('titulo', {titulo="Juego del Duende", subtitulo="Atrapa Monedas", copyR="Presione Enter"})
+    mapa = STI("mapa/bosque1.lua")
 end
 
 -- Función auxiliar para redondeo (Pixel Perfect)
@@ -89,5 +91,6 @@ function love.update(dt)
 end
 function love.draw()
     --estado:dibujar()
+    mapa:draw()
     MaquinaEstadoGlobal:dibujar(dt)
 end
