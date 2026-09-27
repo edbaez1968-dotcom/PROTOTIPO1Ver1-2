@@ -1,8 +1,9 @@
 EstadoJugar = Class { __includes = Estado }
 
 function EstadoJugar:init()
+     love.graphics.setColor(1, 1, 1)
     -- 2. Creación del Jugador 
-    jugador = Jugador(ventana.ancho / 2, ventana.alto / 2, 70)
+    self.jugador = Jugador(ventana.ancho / 2, ventana.alto / 2, 70)
 
     -- Sonidos
     musica = love.audio.newSource("sounds/musica.ogg", "stream")
@@ -35,16 +36,16 @@ function EstadoJugar:actualizar(dt)
 
     -- Detener actualización si se ganó o perdió
     if derrota or victoria then
-        love.graphics.print(" El juego finalizó  Vidas: " .. jugador.vidas.. "  Puntos: " ..jugador.derrotados, 5, 10)
+        love.graphics.print(" El juego finalizó  Vidas: " .. self.jugador.vidas.. "  Puntos: " ..self.jugador.derrotados, 5, 10)
         return
     end
 
     
-    jugador:Actualizar(dt)
+    self.jugador:Actualizar(dt)
 
     -- Actualizar movimiento e hitboxes del enemigo y de la moneda
-    enemigo:Actualizar(jugador.x, jugador.y, jugador.ancho, jugador.alto, dt)
-    moneda:Actualizar(jugador.x, jugador.y, jugador.ancho, jugador.alto, dt)
+    enemigo:Actualizar(self.jugador.x, self.jugador.y, self.jugador.ancho, self.jugador.alto, dt)
+    moneda:Actualizar(self.jugador.x, self.jugador.y, self.jugador.ancho, self.jugador.alto, dt)
 
     -- Actualizar animación de ataque
     if ataque.activado then
@@ -66,37 +67,42 @@ function EstadoJugar:actualizar(dt)
 
     -- ================= COLISIÓN CON EL ENEMIGO =================
     atrapado = comprobarColision(
-        jugador.hitbox_x, jugador.hitbox_y, jugador.ancho, jugador.alto,
+        self.jugador.hitbox_x, self.jugador.hitbox_y, self.jugador.ancho, self.jugador.alto,
         enemigo.hitbox_x, enemigo.hitbox_y, enemigo.ancho, enemigo.alto
     )
 
     if atrapado then
-        enemigo.x = enemigo.inicial_x + math.random(1, 100)
-        enemigo.y = enemigo.inicial_y + math.random(1, 100)
+       if self.jugador.vidas <= 0 then
+        MaquinaEstadoGlobal:cambiar('derrota')
+      end
+        enemigo.x = enemigo.inicial_x + math.random(1, 60)
+        enemigo.y = enemigo.inicial_y + math.random(1, 80)
 
         if ataque.activado then
             love.audio.stop(Sfx_hit)
-            jugador.derrotados = jugador.derrotados + 1
-            if jugador.derrotados >= jugador.objetivo then
+            self.jugador.derrotados = self.jugador.derrotados + 1
+            if self.jugador.derrotados >= self.jugador.objetivo then
                 victoria = true
-                love.graphics.print("Vidas " .. jugador.vidas.." Ganador!!", 5, 10)
+                love.graphics.print("Vidas " .. self.jugador.vidas.." Ganador!!", 5, 10)
                 love.audio.stop(musica) 
                 love.audio.play(svitoria)
             end
         else
             love.audio.play(Sfx_hit)
-            jugador.vidas = jugador.vidas - 1
-            if jugador.vidas <= 0 then
-                 love.graphics.print("Vidas " .. jugador.vidas.."  Perdió :-) ", 5, 10)
-                derrota = true
+            self.jugador.vidas = self.jugador.vidas - 1
+            if self.jugador.vidas <= 0 then
+                MaquinaEstadoGlobal:cambiar('derrota')
+                love.graphics.print("Vidas " .. self.jugador.vidas.."  Perdió :-) ", 5, 10)
+                -- derrota = true
                 love.audio.stop(musica)
+                
             end
         end
     end
 
     -- ================= COLISIÓN CON LA MONEDA =================
     local colisionMoneda = comprobarColision(
-        jugador.hitbox_x, jugador.hitbox_y, jugador.ancho, jugador.alto,
+        self.jugador.hitbox_x, self.jugador.hitbox_y, self.jugador.ancho, self.jugador.alto,
         moneda.hitbox_x, moneda.hitbox_y, moneda.ancho, moneda.alto
     )
 
@@ -106,16 +112,16 @@ function EstadoJugar:actualizar(dt)
         love.audio.play(clink)
 
         -- Aumentar el contador de objetivos en 2
-        jugador.derrotados = jugador.derrotados + 2
+        self.jugador.derrotados = self.jugador.derrotados + 2
 
         -- Reubicar la moneda en una posición aleatoria
         moneda.x = 10 + math.random(1, 130)
         moneda.y = 20 + math.random(1, 140)
 
         -- Verificar si se completó el objetivo del juego
-        if jugador.derrotados >= jugador.objetivo then
+        if self.jugador.derrotados >= self.jugador.objetivo then
             victoria = true
-            love.graphics.print("Vidas " .. jugador.vidas.." Ganador!!", 5, 10)
+            love.graphics.print("Vidas " .. self.jugador.vidas.." Ganador!!", 5, 10)
             love.audio.stop(musica)
             love.audio.play(svitoria)
         end
@@ -132,11 +138,11 @@ function EstadoJugar:dibujar()
     DibujarEscenario()
 
     -- 2. Dibujar Jugador
-    jugador:Dibujar()
+    self.jugador:Dibujar()
     
     if ataque.activado then
         local i = math.floor(ataque.indice)
-        love.graphics.draw(ataque.spritesheet, ataque.quads[i], jugador.x, jugador.y, 0, 1, 1, jugador.origenX + 3, jugador.origenY + 3)  
+        love.graphics.draw(ataque.spritesheet, ataque.quads[i], self.jugador.x, self.jugador.y, 0, 1, 1, self.jugador.origenX + 3, self.jugador.origenY + 3)  
     end
 
     -- 3. Dibujar Enemigo y su Aura
@@ -149,12 +155,12 @@ function EstadoJugar:dibujar()
     -- 4. Dibujar moneda
     moneda:Dibujar()
     -- UI
-    love.graphics.setFont(miFuentePequena)
+    love.graphics.setFont(miFuentePequena)  -- 
     if not derrota then
-        love.graphics.print("Vidas " .. jugador.vidas, 5, 10)
+        love.graphics.print("Vidas " .. self.jugador.vidas, 5, 10) -- 
     end
     if not victoria then
-        love.graphics.print("Objetivo " .. jugador.derrotados .. "/" .. jugador.objetivo, 5, 20)
+        love.graphics.print("Objetivo " .. self.jugador.derrotados .. "/" .. self.jugador.objetivo, 5, 20) -- 
     end
 
     -- MODO DEBUG / DEPURACIÓN (Hitboxes y puntos de origen)
@@ -162,11 +168,11 @@ function EstadoJugar:dibujar()
         love.graphics.setColor(0, 1, 0) -- Verde para depuración
 
         -- Hitboxes del Jugador y Enemigo
-        love.graphics.rectangle("line", jugador.hitbox_x, jugador.hitbox_y, jugador.ancho, jugador.alto)
+        love.graphics.rectangle("line", self.jugador.hitbox_x, self.jugador.hitbox_y, self.jugador.ancho, self.jugador.alto)
         love.graphics.rectangle("line", enemigo.hitbox_x, enemigo.hitbox_y, enemigo.ancho, enemigo.alto)
 
         -- Puntos de origen (centros)
-        love.graphics.circle("fill", jugador.x, jugador.y, 1)
+        love.graphics.circle("fill", self.jugador.x, self.jugador.y, 1)
         love.graphics.circle("fill", enemigo.x, enemigo.y, 1)
 
         love.graphics.setColor(1, 1, 1) -- Restaurar color blanco

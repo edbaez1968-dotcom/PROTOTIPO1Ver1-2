@@ -18,7 +18,7 @@ function Jugador:init(x, y, v)
 	self.hitbox_x = 0
 	self.hitbox_y = 0
 	self.velocidad = v
-	self.vidas=5
+	self.vidas=2
     self.objetivo= 5
     self.derrotados=0
 	

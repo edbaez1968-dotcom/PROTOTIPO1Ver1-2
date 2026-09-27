@@ -14,6 +14,7 @@ aura = nil
 derrota = false
 victoria = false
 estado = nil
+fuente= nil
 
 function love.load()
     -- 1. Configuración del Escenario / Ventana
@@ -27,11 +28,20 @@ function love.load()
     -- Canvas para escalar todos los elementos manteniendo Pixel Art nítido
     canvas = love.graphics.newCanvas(ventana.ancho, ventana.alto)
 
-    
+    fuente= love.graphics.newFont('fuente/SnackerComic_PerosnalUseOnly.ttf',40)
     -- Variables del Sistema de Depuración y Colisión
     depurar = false
     atrapado = false
-    estado= EstadoJugar()
+    
+    -- estado= EstadoTitulo("El duende")
+    MaquinaEstadoGlobal= MaquinaEstado{
+        ['jugar']= function() return EstadoJugar() end,
+        ['titulo']= function() return EstadoTitulo() end,
+        ['derrota']= function() return EstadoDerrota() end
+       -- ['atrapado'] = function() return EstadoAtrapado() end -- Registrar aquí el nuevo estado 
+         
+    }
+    MaquinaEstadoGlobal:cambiar('titulo', {titulo="Juego del Duende", subtitulo="Atrapa Monedas", copyR="Presione Enter"})
 end
 
 -- Función auxiliar para redondeo (Pixel Perfect)
@@ -49,22 +59,35 @@ end
 
 function love.keypressed(key)
     -- Activar / Desactivar modo Depuración con F1
+    if key == "escape" then
+        -- estado= EstadoTitulo("El duende")
+        MaquinaEstadoGlobal:cambiar('titulo', {titulo="Juego del Duende", subtitulo="Atrapa Monedas", copyR="E.D.B"})
+
+    end
     if key == "f1" then
         depurar = not depurar
-    elseif (key == "space" or key == "space") and not ataque.activado then
-        ataque.activado = true
-        love.audio.play(Sfx_ataque)
-    elseif key == "z" and not aura.activado then
+    -- elseif (key == "space" or key == "space") and not ataque.activado then
+       -- ataque.activado = true
+       -- love.audio.play(Sfx_ataque)
+    end
+    if key == "z" and not aura.activado then
         -- El aura solo se activa al presionar la tecla Z
         aura.activado = true
     end
+    if key == "return" then
+       -- estado= EstadoJugar()
+       MaquinaEstadoGlobal:cambiar('jugar')
+    end
+    
 end
 function love.update(dt)
     -- Actualizar mundo físico y entidad del jugador
     world:update(dt)
-   estado:actualizar(dt)
+   -- estado:actualizar(dt)
+   MaquinaEstadoGlobal:actualizar(dt)
 
 end
 function love.draw()
-    estado:dibujar()
+    --estado:dibujar()
+    MaquinaEstadoGlobal:dibujar(dt)
 end
