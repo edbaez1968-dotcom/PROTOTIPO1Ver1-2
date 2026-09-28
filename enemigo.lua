@@ -2,7 +2,7 @@
 -- Class =require 'class'
 Enemigo = Class{}
 -- Constructor function to create a nuevo 
-function Enemigo:init(x, y,img, v)
+function Enemigo:init(x, y,img, v, mundo)
     -- local self = setmetatable({}, Enemigo)
 	self.sprite= love.graphics.newImage(img)
 	--self.sprite= love.graphics.newImage("img/Ogro16x16.png")
@@ -18,6 +18,8 @@ function Enemigo:init(x, y,img, v)
 	self.hitbox_x = 0
 	self.hitbox_y = 0
 	self.velocidad = v
+    self.mundo = mundo
+    self.mundo:add(self, self.hitbox_x, self.hitbox_y, self.ancho, self.alto)
     -- return self
 end
 

@@ -3,7 +3,7 @@ EstadoJugar = Class { __includes = Estado }
 function EstadoJugar:init()
      love.graphics.setColor(1, 1, 1)
     -- 2. Creación del Jugador 
-    self.jugador = Jugador(ventana.ancho / 2, ventana.alto / 2, 70)
+    self.jugador = Jugador(ventana.ancho / 2, ventana.alto / 2, 70,mundo)
 
     -- Sonidos
     musica = love.audio.newSource("sounds/musica.ogg", "stream")
@@ -24,7 +24,7 @@ function EstadoJugar:init()
     ataque.activado = false
 
     -- 3. Creación del Enemigo
-    enemigo = Enemigo(30, 30, "img/Ogro16x16.png", 30)
+    enemigo = Enemigo(30, 30, "img/Ogro16x16.png", 30, mundo)
    -- 3. Creación del Enemigo
     moneda = Moneda(100, 60, "img/MonedaOro16x16.png", 10)
 
@@ -133,13 +133,18 @@ end  -- de actualizar
 function EstadoJugar:dibujar()
     love.graphics.setCanvas(canvas)
     love.graphics.clear()
-
+    mapa:drawLayer(mapa.layers["piso"])
+     self.jugador:Dibujar()
+    mapa:drawLayer(mapa.layers["Deco"])
+    camara_principal:attach(0,0,ventana.ancho, ventana.alto)
     -- 1. Escenario
     DibujarEscenario()
 
     -- 2. Dibujar Jugador
-    self.jugador:Dibujar()
-    
+   --  self.jugador:Dibujar()
+    -- este servia camara_principal:lookAt(redondear(self.jugador.x),redondear(self.jugador.y))
+    --camara_principal:lookAt(redondear(jugador.x), redondear(jugador.y))
+-- poner aqui
     if ataque.activado then
         local i = math.floor(ataque.indice)
         love.graphics.draw(ataque.spritesheet, ataque.quads[i], self.jugador.x, self.jugador.y, 0, 1, 1, self.jugador.origenX + 3, self.jugador.origenY + 3)  
@@ -177,7 +182,7 @@ function EstadoJugar:dibujar()
 
         love.graphics.setColor(1, 1, 1) -- Restaurar color blanco
     end
-
+    camara_principal:detach()
     love.graphics.setCanvas()
 
     -- Dibujar Canvas en pantalla con la escala de la ventana

@@ -2,8 +2,12 @@
 require("dependencias")
 ventana = { -- 192,208
     ancho = 160,
-    alto = 170,
-    escala = 2
+    alto = 144,
+    escala = 4,
+    camara_centro_x= 0,
+    camara_centro_y= 0,
+    mapa_ancho= 0,
+    mapa_alto= 0
 }
 
 miFuentePequena = love.graphics.newFont(10)
@@ -15,6 +19,9 @@ derrota = false
 victoria = false
 estado = nil
 fuente= nil
+mapa = nil
+camara_principal= nil
+mundo= nil
 
 function love.load()
     -- 1. Configuración del Escenario / Ventana
@@ -23,6 +30,7 @@ function love.load()
 
     -- Inicializar mundo físico para el escenario
     world = love.physics.newWorld(0, 0, true)
+    mundo =Bump.newWorld(16)
     -- Crear las estructuras del escenario (definido en escenario.lua)
     CrearEscenario()
     -- Canvas para escalar todos los elementos manteniendo Pixel Art nítido
@@ -32,7 +40,7 @@ function love.load()
     -- Variables del Sistema de Depuración y Colisión
     depurar = false
     atrapado = false
-    mapa = nil
+    
     
     -- estado= EstadoTitulo("El duende")
     MaquinaEstadoGlobal= MaquinaEstado{
@@ -44,6 +52,12 @@ function love.load()
     }
     MaquinaEstadoGlobal:cambiar('titulo', {titulo="Juego del Duende", subtitulo="Atrapa Monedas", copyR="Presione Enter"})
     mapa = STI("mapa/bosque1.lua")
+    camara_principal= Camara()
+    ventana.camara_centro_x = ventana.ancho * 0.5
+    ventana.camara_centro_y =  ventana.ancho * 0.5
+    ventana.mapa_ancho = mapa.width * mapa.tilewidth
+    ventana.mapa_alto = mapa.height * mapa.tileheight
+
 end
 
 -- Función auxiliar para redondeo (Pixel Perfect)
@@ -83,14 +97,32 @@ function love.keypressed(key)
     
 end
 function love.update(dt)
+    
+if camara_principal.x < ventana.camara_centro_x then
+    camara_principal.x = ventana.camara_centro_x
+end
+
+if camara_principal.y < ventana.camara_centro_y then
+    camara_principal.y = ventana.camara_centro_y
+end
+
+if camara_principal.x > (ventana.mapa_alto - ventana.camara_centro_y) then
+    camara_principal.x = (ventana.mapa_ancho - ventana.camara_centro_x)
+end
+if camara_principal.y > (ventana.mapa_alto - ventana.camara_centro_y)  then
+    camara_principal.y = (ventana.mapa_alto- ventana.camara_centro_y)
+end
+
     -- Actualizar mundo físico y entidad del jugador
     world:update(dt)
    -- estado:actualizar(dt)
    MaquinaEstadoGlobal:actualizar(dt)
+   
 
 end
 function love.draw()
     --estado:dibujar()
     mapa:draw()
     MaquinaEstadoGlobal:dibujar(dt)
+    
 end

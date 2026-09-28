@@ -4,7 +4,7 @@
 -- Jugador.__index = Jugador
 Jugador = Class{}
 -- Constructor function to create a nuevo 
-function Jugador:init(x, y, v)
+function Jugador:init(x, y, v,mundo)
     -- local self = setmetatable({}, Jugador)
 	self.sprite= love.graphics.newImage("img/Duende.png")
 	self.x = x
@@ -18,9 +18,12 @@ function Jugador:init(x, y, v)
 	self.hitbox_x = 0
 	self.hitbox_y = 0
 	self.velocidad = v
-	self.vidas=2
+	self.vidas=200
     self.objetivo= 5
     self.derrotados=0
+    self.mundo = mundo
+    self.mundo:add(self, self.hitbox_x, self.hitbox_y, self.ancho, self.alto)
+
 	
     -- return self
 end
@@ -44,6 +47,7 @@ end
 -- Draw the enemy on the screen  jugador.correr.quads[i],
 function Jugador:Dibujar()
     love.graphics.draw(self.sprite ,redondear(self.x),redondear(self.y),0,1,1,self.origenX+3,self.origenY+3) 
+    camara_principal:lookAt(redondear(self.x), redondear(self.y))
 end
 
 return Jugador

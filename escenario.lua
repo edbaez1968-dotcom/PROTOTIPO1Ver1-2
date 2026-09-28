@@ -68,15 +68,15 @@ end
 function DibujarEscenario()
     arbol_izquierdo:DibujarEstructura()
     arbol_derecho:DibujarEstructura()
-    suelo_bosque:DibujarEstructura()
+    -- suelo_bosque:DibujarEstructura()
     
-    rama_central:DibujarEstructura()
+    -- rama_central:DibujarEstructura()
     rama_superior_izq:DibujarEstructura()
     rama_superior_der:DibujarEstructura()
     rama_inferior_izq:DibujarEstructura()
     rama_inferior_der:DibujarEstructura()
     
-    hongo_izq:DibujarEstructura()
+    -- hongo_izq:DibujarEstructura()
     hongo_der:DibujarEstructura()
 
     moneda_plata:DibujarEstructura()
