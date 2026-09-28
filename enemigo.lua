@@ -18,6 +18,7 @@ function Enemigo:init(x, y,img, v, mundo)
 	self.hitbox_x = 0
 	self.hitbox_y = 0
 	self.velocidad = v
+    self.es_enemigo= true
     self.mundo = mundo
     self.mundo:add(self, self.hitbox_x, self.hitbox_y, self.ancho, self.alto)
     -- return self

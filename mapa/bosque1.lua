@@ -9,8 +9,8 @@ return {
   height = 20,
   tilewidth = 16,
   tileheight = 16,
-  nextlayerid = 4,
-  nextobjectid = 1,
+  nextlayerid = 5,
+  nextobjectid = 16,
   properties = {},
   tilesets = {
     {
@@ -151,6 +151,106 @@ return {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      }
+    },
+    {
+      type = "objectgroup",
+      draworder = "topdown",
+      id = 4,
+      name = "Colisiones",
+      class = "",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      parallaxx = 1,
+      parallaxy = 1,
+      properties = {},
+      objects = {
+        {
+          id = 4,
+          name = "P1",
+          type = "",
+          shape = "rectangle",
+          x = 1.92115,
+          y = 2.56154,
+          width = 10.2461,
+          height = 315.709,
+          rotation = 0,
+          opacity = 1,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 8,
+          name = "P1",
+          type = "",
+          shape = "rectangle",
+          x = 628.217,
+          y = 1.60117,
+          width = 10.2461,
+          height = 315.709,
+          rotation = 0,
+          opacity = 1,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 9,
+          name = "P2",
+          type = "",
+          shape = "rectangle",
+          x = 1.92115,
+          y = 1.92115,
+          width = 633.98,
+          height = 11.5269,
+          rotation = 0,
+          opacity = 1,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 10,
+          name = "P2",
+          type = "",
+          shape = "rectangle",
+          x = 4.48288,
+          y = 305.463,
+          width = 633.98,
+          height = 11.5269,
+          rotation = 0,
+          opacity = 1,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 11,
+          name = "h1",
+          type = "",
+          shape = "rectangle",
+          x = 92.8557,
+          y = 158.175,
+          width = 20.8077,
+          height = 18.2461,
+          rotation = 0,
+          opacity = 1,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 13,
+          name = "h2",
+          type = "",
+          shape = "rectangle",
+          x = 400.881,
+          y = 46.748,
+          width = 14.0885,
+          height = 16.0096,
+          rotation = 0,
+          opacity = 1,
+          visible = true,
+          properties = {}
+        }
       }
     }
   }

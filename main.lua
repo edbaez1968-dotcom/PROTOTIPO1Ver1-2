@@ -30,7 +30,15 @@ function love.load()
 
     -- Inicializar mundo físico para el escenario
     world = love.physics.newWorld(0, 0, true)
+    mapa = STI("mapa/bosque1.lua")
     mundo =Bump.newWorld(16)
+    
+    if mapa.layers["Colisiones"] then
+    for _, obj in ipairs(mapa.layers["Colisiones"].objects) do
+        obj.es_pared=true
+        mundo:add(obj, obj.x, obj.y, obj.width, obj.height)
+    end
+end
     -- Crear las estructuras del escenario (definido en escenario.lua)
     CrearEscenario()
     -- Canvas para escalar todos los elementos manteniendo Pixel Art nítido
@@ -51,7 +59,7 @@ function love.load()
          
     }
     MaquinaEstadoGlobal:cambiar('titulo', {titulo="Juego del Duende", subtitulo="Atrapa Monedas", copyR="Presione Enter"})
-    mapa = STI("mapa/bosque1.lua")
+    
     camara_principal= Camara()
     ventana.camara_centro_x = ventana.ancho * 0.5
     ventana.camara_centro_y =  ventana.ancho * 0.5

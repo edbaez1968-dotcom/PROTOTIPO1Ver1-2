@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="40" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="1">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="40" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="16">
  <editorsettings>
-  <export target="../bosque1.lua" format="lua"/>
+  <export target="bosque1.lua" format="lua"/>
  </editorsettings>
  <tileset firstgid="1" name="forest-palette02-day" tilewidth="16" tileheight="16" tilecount="288" columns="16">
   <image source="forest-palette02-day.png" width="256" height="288"/>
@@ -57,4 +57,12 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup id="4" name="Colisiones">
+  <object id="4" name="P1" x="1.92115" y="2.56154" width="10.2461" height="315.709"/>
+  <object id="8" name="P1" x="628.217" y="1.60117" width="10.2461" height="315.709"/>
+  <object id="9" name="P2" x="1.92115" y="1.92115" width="633.98" height="11.5269"/>
+  <object id="10" name="P2" x="4.48288" y="305.463" width="633.98" height="11.5269"/>
+  <object id="11" name="h1" x="92.8557" y="158.175" width="20.8077" height="18.2461"/>
+  <object id="13" name="h2" x="400.881" y="46.748" width="14.0885" height="16.0096"/>
+ </objectgroup>
 </map>

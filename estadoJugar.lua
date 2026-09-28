@@ -66,11 +66,13 @@ function EstadoJugar:actualizar(dt)
     end
 
     -- ================= COLISIÓN CON EL ENEMIGO =================
+--[[
     atrapado = comprobarColision(
         self.jugador.hitbox_x, self.jugador.hitbox_y, self.jugador.ancho, self.jugador.alto,
         enemigo.hitbox_x, enemigo.hitbox_y, enemigo.ancho, enemigo.alto
     )
-
+]]
+atrapado=self.jugador:Colision()
     if atrapado then
        if self.jugador.vidas <= 0 then
         MaquinaEstadoGlobal:cambiar('derrota')
