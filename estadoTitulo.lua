@@ -6,9 +6,18 @@ function EstadoTitulo:init()
 	self.copyR = ""
 end
 function EstadoTitulo:ingresar(datos)
-    self.titulo = datos.titulo
-    self.subtitulo = datos.subtitulo
-	self.copyR = datos.copyR
+
+    datos = datos or {}
+
+    self.titulo =
+        datos.titulo or ""
+
+    self.subtitulo =
+        datos.subtitulo or ""
+
+    self.copyR =
+        datos.copyR or ""
+
 end
 function EstadoTitulo:salir() end
 function EstadoTitulo:actualizar(dt) end

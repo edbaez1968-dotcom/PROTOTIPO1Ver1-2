@@ -5,6 +5,7 @@ Camara = require 'lib.Camera'
 Bump = require 'lib.bump'
 
 -- Importar Clases
+ require "Entidad"
 require "jugador"
 require "enemigo"
 require "moneda"
@@ -19,3 +20,6 @@ require "animaciones"
  require "estadoTitulo"
  require "estadoDerrota"
  require "maquinaEstado"
+
+
+

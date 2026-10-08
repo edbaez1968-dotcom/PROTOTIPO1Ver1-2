@@ -12,7 +12,10 @@ function MaquinaEstado:init(estados)
 end
 
 function MaquinaEstado:cambiar(nombreEstado, parametrosIniciales)
-    assert(self.estados[nombreEstado])
+    assert(
+    self.estados[nombreEstado],
+    "Estado no registrado: " .. tostring(nombreEstado)
+)
     self.actual:salir()
     self.actual = self.estados[nombreEstado]()
     self.actual:ingresar(parametrosIniciales)

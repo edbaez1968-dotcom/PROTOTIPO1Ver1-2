@@ -1,202 +1,427 @@
 EstadoJugar = Class { __includes = Estado }
 
 function EstadoJugar:init()
-     love.graphics.setColor(1, 1, 1)
-    -- 2. Creación del Jugador 
-    self.jugador = Jugador(ventana.ancho / 2, ventana.alto / 2, 70,mundo)
 
+    love.graphics.setColor(1,1,1)
+
+    ------------------------------------------------
+    -- Jugador
+    ------------------------------------------------
+    self.jugador = Jugador(
+        ventana.ancho / 2,
+        ventana.alto / 2,
+        75,
+        mundo
+    )
+
+    ------------------------------------------------
+    -- Enemigo
+    ------------------------------------------------
+    self.enemigo = Enemigo(
+        30,
+        30,
+        "img/Ogro16x16.png",
+        30,
+        mundo
+    )
+
+    ------------------------------------------------
+    -- Moneda
+    ------------------------------------------------
+    self.moneda = Moneda(
+        100,
+        60,
+        "img/MonedaOro16x16.png"
+    )
+
+    ------------------------------------------------
     -- Sonidos
-    musica = love.audio.newSource("sounds/musica.ogg", "stream")
+    ------------------------------------------------
+    musica = love.audio.newSource(
+        "sounds/musica.ogg",
+        "stream"
+    )
+
     musica:setLooping(true)
     musica:setVolume(0.60)
     love.audio.play(musica)
 
-    Sfx_ataque = love.audio.newSource("sounds/espada.wav", "static")
-    Sfx_hit = love.audio.newSource("sounds/colision.wav", "static")
-    svitoria = love.audio.newSource("sounds/victoria.wav", "static")
-    clink = love.audio.newSource("sounds/moneda_oro.wav", "static")
+    Sfx_ataque = love.audio.newSource(
+        "sounds/espada.wav",
+        "static"
+    )
 
-    -- Creación de animaciones
-    aura = CrearAnimacion("img/EnemigoGiro.png", 3, 16, 16, 12, false)
-    aura.activado = false -- Desactivada por defecto
+    Sfx_hit = love.audio.newSource(
+        "sounds/colision.wav",
+        "static"
+    )
 
-    ataque = CrearAnimacion("img/Giro2.png", 3, 16, 16, 12, false)
+    svitoria = love.audio.newSource(
+        "sounds/victoria.wav",
+        "static"
+    )
+
+    clink = love.audio.newSource(
+        "sounds/moneda_oro.wav",
+        "static"
+    )
+
+    ------------------------------------------------
+    -- Animaciones
+    ------------------------------------------------
+    aura = CrearAnimacion(
+        "img/EnemigoGiro.png",
+        3,
+        16,
+        16,
+        12,
+        false
+    )
+
+    aura.activado = false
+
+    ataque = CrearAnimacion(
+        "img/Giro2.png",
+        3,
+        16,
+        16,
+        12,
+        false
+    )
+
     ataque.activado = false
 
-    -- 3. Creación del Enemigo
-    enemigo = Enemigo(30, 30, "img/Ogro16x16.png", 30, mundo)
-   -- 3. Creación del Enemigo
-    moneda = Moneda(100, 60, "img/MonedaOro16x16.png", 10)
-
 end
-function EstadoJugar:ingresar() end
-function EstadoJugar:salir() end
+
+function EstadoJugar:ingresar()
+end
+
+function EstadoJugar:salir()
+end
+
 function EstadoJugar:actualizar(dt)
+
     atrapado = false
 
-    -- Detener actualización si se ganó o perdió
     if derrota or victoria then
-        love.graphics.print(" El juego finalizó  Vidas: " .. self.jugador.vidas.. "  Puntos: " ..self.jugador.derrotados, 5, 10)
         return
     end
 
-    
+    ------------------------------------------------
+    -- Actualización de entidades
+    ------------------------------------------------
+
     self.jugador:Actualizar(dt)
 
-    -- Actualizar movimiento e hitboxes del enemigo y de la moneda
-    enemigo:Actualizar(self.jugador.x, self.jugador.y, self.jugador.ancho, self.jugador.alto, dt)
-    moneda:Actualizar(self.jugador.x, self.jugador.y, self.jugador.ancho, self.jugador.alto, dt)
+    self.enemigo:Actualizar(
+        self.jugador,
+        dt
+    )
 
-    -- Actualizar animación de ataque
+    self.moneda:Actualizar(dt)
+
+    ------------------------------------------------
+    -- Animación ataque
+    ------------------------------------------------
+
     if ataque.activado then
-        ataque.indice = ataque.indice + (10 * dt)
+
+        ataque.indice =
+            ataque.indice + (10 * dt)
+
         if ataque.indice >= #ataque.quads + 1 then
             ataque.indice = 1
             ataque.activado = false
-        end   
+        end
+
     end
 
-    -- Actualizar animación de aura
+    ------------------------------------------------
+    -- Animación aura
+    ------------------------------------------------
+
     if aura.activado then
-        aura.indice = aura.indice + (7 * dt)
+
+        aura.indice =
+            aura.indice + (7 * dt)
+
         if aura.indice >= #aura.quads + 1 then
             aura.indice = 1
             aura.activado = false
-        end   
+        end
+
     end
 
-    -- ================= COLISIÓN CON EL ENEMIGO =================
---[[
-    atrapado = comprobarColision(
-        self.jugador.hitbox_x, self.jugador.hitbox_y, self.jugador.ancho, self.jugador.alto,
-        enemigo.hitbox_x, enemigo.hitbox_y, enemigo.ancho, enemigo.alto
-    )
-]]
-atrapado=self.jugador:Colision()
+    ------------------------------------------------
+    -- Colisión enemigo
+    ------------------------------------------------
+
+    atrapado =
+        self.jugador:Colisiona(
+            self.enemigo
+        )
+
     if atrapado then
-       if self.jugador.vidas <= 0 then
-        MaquinaEstadoGlobal:cambiar('derrota')
-      end
-        enemigo.x = enemigo.inicial_x + math.random(1, 60)
-        enemigo.y = enemigo.inicial_y + math.random(1, 80)
+
+        self.enemigo.x =
+            self.enemigo.inicial_x +
+            math.random(1,60)
+
+        self.enemigo.y =
+            self.enemigo.inicial_y +
+            math.random(1,80)
+
+        self.enemigo:ActualizarHitbox()
 
         if ataque.activado then
+
             love.audio.stop(Sfx_hit)
-            self.jugador.derrotados = self.jugador.derrotados + 1
-            if self.jugador.derrotados >= self.jugador.objetivo then
+
+            self.jugador.derrotados =
+                self.jugador.derrotados + 1
+
+            if self.jugador.derrotados >=
+               self.jugador.objetivo
+            then
+
                 victoria = true
-                love.graphics.print("Vidas " .. self.jugador.vidas.." Ganador!!", 5, 10)
-                love.audio.stop(musica) 
-                love.audio.play(svitoria)
-            end
-        else
-            love.audio.play(Sfx_hit)
-            self.jugador.vidas = self.jugador.vidas - 1
-            if self.jugador.vidas <= 0 then
-                MaquinaEstadoGlobal:cambiar('derrota')
-                love.graphics.print("Vidas " .. self.jugador.vidas.."  Perdió :-) ", 5, 10)
-                -- derrota = true
+
                 love.audio.stop(musica)
-                
+                love.audio.play(svitoria)
+
             end
+
+        else
+
+            love.audio.play(Sfx_hit)
+
+            self.jugador.vidas =
+                self.jugador.vidas - 1
+
+            if self.jugador.vidas <= 0 then
+
+                love.audio.stop(musica)
+
+                MaquinaEstadoGlobal:cambiar(
+                    "derrota"
+                )
+
+            end
+
         end
+
     end
 
-    -- ================= COLISIÓN CON LA MONEDA =================
-    local colisionMoneda = comprobarColision(
-        self.jugador.hitbox_x, self.jugador.hitbox_y, self.jugador.ancho, self.jugador.alto,
-        moneda.hitbox_x, moneda.hitbox_y, moneda.ancho, moneda.alto
-    )
+    ------------------------------------------------
+    -- Colisión moneda
+    ------------------------------------------------
+
+    local colisionMoneda =
+        self.jugador:Colisiona(
+            self.moneda
+        )
 
     if colisionMoneda then
-        -- Reproducir sonido de moneda
+
         love.audio.stop(clink)
         love.audio.play(clink)
 
-        -- Aumentar el contador de objetivos en 2
-        self.jugador.derrotados = self.jugador.derrotados + 2
+        self.jugador.derrotados =
+            self.jugador.derrotados + 2
 
-        -- Reubicar la moneda en una posición aleatoria
-        moneda.x = 10 + math.random(1, 130)
-        moneda.y = 20 + math.random(1, 140)
+        self.moneda:Reubicar()
 
-        -- Verificar si se completó el objetivo del juego
-        if self.jugador.derrotados >= self.jugador.objetivo then
+        if self.jugador.derrotados >=
+           self.jugador.objetivo
+        then
+
             victoria = true
-            love.graphics.print("Vidas " .. self.jugador.vidas.." Ganador!!", 5, 10)
+
             love.audio.stop(musica)
             love.audio.play(svitoria)
+
         end
-    end
- 
-   
 
-end  -- de actualizar
+    end
+
+end
+
 function EstadoJugar:dibujar()
+
     love.graphics.setCanvas(canvas)
+
     love.graphics.clear()
-    mapa:drawLayer(mapa.layers["piso"])
-     self.jugador:Dibujar()
-    mapa:drawLayer(mapa.layers["Deco"])
-    camara_principal:attach(0,0,ventana.ancho, ventana.alto)
-    -- 1. Escenario
-    DibujarEscenario()
 
-    -- 2. Dibujar Jugador
-   --  self.jugador:Dibujar()
-    -- este servia camara_principal:lookAt(redondear(self.jugador.x),redondear(self.jugador.y))
-    --camara_principal:lookAt(redondear(jugador.x), redondear(jugador.y))
--- poner aqui
+    mapa:drawLayer(
+        mapa.layers["piso"]
+    )
+    mapa:drawLayer(        mapa.layers["Deco"]    )
+    mapa:drawLayer(        mapa.layers["Colisiones"]    )
+    camara_principal:attach(
+        0,
+        0,
+        ventana.ancho,
+        ventana.alto
+    )
+
+    ------------------------------------------------
+    -- Escenario
+    ------------------------------------------------
+
+    -- DibujarEscenario()
+
+    ------------------------------------------------
+    -- Entidades
+    ------------------------------------------------
+
+    self.jugador:Dibujar()
+    self.enemigo:Dibujar()
+    self.moneda:Dibujar()
+
+    ------------------------------------------------
+    -- Ataque
+    ------------------------------------------------
+
     if ataque.activado then
-        local i = math.floor(ataque.indice)
-        love.graphics.draw(ataque.spritesheet, ataque.quads[i], self.jugador.x, self.jugador.y, 0, 1, 1, self.jugador.origenX + 3, self.jugador.origenY + 3)  
+
+        local i =
+            math.floor(
+                ataque.indice
+            )
+
+        love.graphics.draw(
+            ataque.spritesheet,
+            ataque.quads[i],
+            self.jugador.x,
+            self.jugador.y,
+            0,
+            1,
+            1,
+            self.jugador.origenX,
+            self.jugador.origenY
+        )
+
     end
 
-    -- 3. Dibujar Enemigo y su Aura
-    enemigo:Dibujar()
-    
+    ------------------------------------------------
+    -- Aura
+    ------------------------------------------------
+
     if aura.activado then
-        local i = math.floor(aura.indice)
-        love.graphics.draw(aura.spritesheet, aura.quads[i], enemigo.x, enemigo.y, 0, 1, 1, enemigo.origenX + 3, enemigo.origenY + 3)  
-    end
-    -- 4. Dibujar moneda
-    moneda:Dibujar()
-    -- UI
-    love.graphics.setFont(miFuentePequena)  -- 
-    if not derrota then
-        love.graphics.print("Vidas " .. self.jugador.vidas, 5, 10) -- 
-    end
-    if not victoria then
-        love.graphics.print("Objetivo " .. self.jugador.derrotados .. "/" .. self.jugador.objetivo, 5, 20) -- 
+
+        local i =
+            math.floor(
+                aura.indice
+            )
+
+        love.graphics.draw(
+            aura.spritesheet,
+            aura.quads[i],
+            self.enemigo.x,
+            self.enemigo.y,
+            0,
+            1,
+            1,
+            self.enemigo.origenX,
+            self.enemigo.origenY
+        )
+
     end
 
-    -- MODO DEBUG / DEPURACIÓN (Hitboxes y puntos de origen)
+    ------------------------------------------------
+    -- Debug
+    ------------------------------------------------
+
     if depurar then
-        love.graphics.setColor(0, 1, 0) -- Verde para depuración
 
-        -- Hitboxes del Jugador y Enemigo
-        love.graphics.rectangle("line", self.jugador.hitbox_x, self.jugador.hitbox_y, self.jugador.ancho, self.jugador.alto)
-        love.graphics.rectangle("line", enemigo.hitbox_x, enemigo.hitbox_y, enemigo.ancho, enemigo.alto)
+        love.graphics.setColor(0,1,0)
 
-        -- Puntos de origen (centros)
-        love.graphics.circle("fill", self.jugador.x, self.jugador.y, 1)
-        love.graphics.circle("fill", enemigo.x, enemigo.y, 1)
+        love.graphics.rectangle(
+            "line",
+            self.jugador.hitbox_x,
+            self.jugador.hitbox_y,
+            self.jugador.ancho,
+            self.jugador.alto
+        )
 
-        love.graphics.setColor(1, 1, 1) -- Restaurar color blanco
+        love.graphics.rectangle(
+            "line",
+            self.enemigo.hitbox_x,
+            self.enemigo.hitbox_y,
+            self.enemigo.ancho,
+            self.enemigo.alto
+        )
+
+        love.graphics.setColor(1,1,1)
+
     end
+
+    ------------------------------------------------
+    -- Finalizar cámara
+    ------------------------------------------------
+
     camara_principal:detach()
+
+    ------------------------------------------------
+    -- Finalizar canvas
+    ------------------------------------------------
+
     love.graphics.setCanvas()
 
-    -- Dibujar Canvas en pantalla con la escala de la ventana
-    love.graphics.draw(canvas, 0, 0, 0, ventana.escala, ventana.escala)
+    love.graphics.draw(
+        canvas,
+        0,
+        0,
+        0,
+        ventana.escala,
+        ventana.escala
+    )
 
-    -- UI e Información fuera del Canvas (Resolución real)
-    if depurar then
-        love.graphics.setColor(0, 1, 0)
-        love.graphics.print("FPS: " .. love.timer.getFPS(), 10, 10)
-        if atrapado then
-            love.graphics.print("ATRAPADO", 10, 30)
-        end
-        love.graphics.setColor(1, 1, 1)
+    ------------------------------------------------
+    -- Interfaz
+    ------------------------------------------------
+
+    love.graphics.setFont(
+        miFuentePequena
+    )
+
+    love.graphics.print(
+        "Vidas: " ..
+        self.jugador.vidas,
+        10,
+        10
+    )
+
+    love.graphics.print(
+        "Objetivo: " ..
+        self.jugador.derrotados ..
+        "/" ..
+        self.jugador.objetivo,
+        10,
+        25
+    )
+
+    if victoria then
+
+        love.graphics.print(
+            "GANADOR",
+            10,
+            40
+        )
+
     end
-end  -- de dibujar
+
+    if depurar then
+
+        love.graphics.print(
+            "FPS: " ..
+            love.timer.getFPS(),
+            10,
+            55
+        )
+
+    end
+
+end
+
+return EstadoJugar

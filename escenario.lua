@@ -66,6 +66,7 @@ function CrearEscenario()
 end
 
 function DibujarEscenario()
+    --[[
     arbol_izquierdo:DibujarEstructura()
     arbol_derecho:DibujarEstructura()
     -- suelo_bosque:DibujarEstructura()
@@ -81,4 +82,5 @@ function DibujarEscenario()
 
     moneda_plata:DibujarEstructura()
     -- moneda_oro:DibujarEstructura()
+    ]]
 end
