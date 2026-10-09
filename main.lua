@@ -19,6 +19,7 @@ aura = nil
 
 derrota = false
 victoria = false
+depurar = true
 
 estado = nil
 fuente = nil
@@ -57,24 +58,19 @@ function love.load()
     -------------------------------------------------
 
     if mapa.layers["Colisiones"] then
-
-        for _, obj in ipairs(
-            mapa.layers["Colisiones"].objects
-        ) do
-
-            obj.es_pared = true
-
-            mundo:add(
-                obj,
-                obj.x,
-                obj.y,
-                obj.width,
-                obj.height
-            )
-
-        end
+    for _, obj in ipairs(
+        mapa.layers["Colisiones"].objects
+    ) do
+        obj.es_pared = true
+        mundo:add(
+            obj,
+            obj.x,
+            obj.y,
+            obj.width,
+            obj.height
+        )
     end
-
+end
     -------------------------------------------------
     -- Escenario
     -------------------------------------------------
@@ -172,51 +168,27 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
+    if camara_principal then
+        if camara_principal.x < ventana.camara_centro_x then
+            camara_principal.x = ventana.camara_centro_x
+        end
 
-    ----------------------------------------
-    -- Límites cámara
-    ----------------------------------------
+        if camara_principal.y < ventana.camara_centro_y then
+            camara_principal.y = ventana.camara_centro_y
+        end
 
-    if camara_principal.x < ventana.camara_centro_x then
-        camara_principal.x = ventana.camara_centro_x
+        -- Corrección de variables de ancho/alto horizontal
+        if camara_principal.x > (ventana.mapa_ancho - ventana.camara_centro_x) then
+            camara_principal.x = (ventana.mapa_ancho - ventana.camara_centro_x)
+        end
+
+        if camara_principal.y > (ventana.mapa_alto - ventana.camara_centro_y) then
+            camara_principal.y = (ventana.mapa_alto - ventana.camara_centro_y)
+        end
     end
-
-    if camara_principal.y < ventana.camara_centro_y then
-        camara_principal.y = ventana.camara_centro_y
-    end
-
-    if camara_principal.x >
-        (ventana.mapa_ancho - ventana.camara_centro_x)
-    then
-
-        camara_principal.x =
-            ventana.mapa_ancho -
-            ventana.camara_centro_x
-
-    end
-
-    if camara_principal.y >
-        (ventana.mapa_alto - ventana.camara_centro_y)
-    then
-
-        camara_principal.y =
-            ventana.mapa_alto -
-            ventana.camara_centro_y
-
-    end
-
-    ----------------------------------------
-    -- Mundo físico
-    ----------------------------------------
 
     world:update(dt)
-
-    ----------------------------------------
-    -- Estado actual
-    ----------------------------------------
-
     MaquinaEstadoGlobal:actualizar(dt)
-
 end
 
 function love.draw()

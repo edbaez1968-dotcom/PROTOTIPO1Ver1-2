@@ -5,14 +5,13 @@ Camara = require 'lib.Camera'
 Bump = require 'lib.bump'
 
 -- Importar Clases
- require "Entidad"
+require "Entidad"
 require "jugador"
 require "enemigo"
 require "moneda"
 require "escenario"
 require "animaciones"
-
-
+require "Camara"
 -- Importar Estados
 -- estados ( game states)son las distintas pantallas, fases o modos lógicos en los que se puede encontrar un juego
  require "estado"

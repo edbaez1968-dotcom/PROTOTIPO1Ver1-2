@@ -3,16 +3,15 @@ EstadoJugar = Class { __includes = Estado }
 function EstadoJugar:init()
 
     love.graphics.setColor(1,1,1)
+-- Reiniciar condiciones de estado de juego
+    derrota = false
+    victoria = false
 
     ------------------------------------------------
     -- Jugador
     ------------------------------------------------
-    self.jugador = Jugador(
-        ventana.ancho / 2,
-        ventana.alto / 2,
-        75,
-        mundo
-    )
+    ----- Por ejemplo, velocidad = 80 o 100 píxeles por segundo
+self.jugador = Jugador(ventana.ancho / 2, ventana.alto / 2, 70, mundo)
 
     ------------------------------------------------
     -- Enemigo
@@ -119,7 +118,7 @@ function EstadoJugar:actualizar(dt)
     )
 
     self.moneda:Actualizar(dt)
-
+camara_principal:lookAt(redondear(self.jugador.x), redondear(self.jugador.y))
     ------------------------------------------------
     -- Animación ataque
     ------------------------------------------------
@@ -156,10 +155,7 @@ function EstadoJugar:actualizar(dt)
     -- Colisión enemigo
     ------------------------------------------------
 
-    atrapado =
-        self.jugador:Colisiona(
-            self.enemigo
-        )
+    atrapado = self.jugador:ColisionCon(self.enemigo)
 
     if atrapado then
 
@@ -217,9 +213,7 @@ function EstadoJugar:actualizar(dt)
     ------------------------------------------------
 
     local colisionMoneda =
-        self.jugador:Colisiona(
-            self.moneda
-        )
+        self.jugador:ColisionCon( self.moneda )
 
     if colisionMoneda then
 
@@ -255,8 +249,8 @@ function EstadoJugar:dibujar()
     mapa:drawLayer(
         mapa.layers["piso"]
     )
-    mapa:drawLayer(        mapa.layers["Deco"]    )
-    mapa:drawLayer(        mapa.layers["Colisiones"]    )
+    mapa:drawLayer( mapa.layers["Deco"]    )
+    mapa:drawLayer( mapa.layers["Colisiones"]    )
     camara_principal:attach(
         0,
         0,
@@ -267,6 +261,9 @@ function EstadoJugar:dibujar()
     ------------------------------------------------
     -- Escenario
     ------------------------------------------------
+if depurar then
+    love.graphics.print("Jugador: x=" .. math.floor(self.jugador.x) .. ", y=" .. math.floor(self.jugador.y), 10, 70)
+end
 
     -- DibujarEscenario()
 
