@@ -36,44 +36,45 @@ function debugUI()
     love.graphics.setColor(1, 1, 1)
 end
 ]]
+-- Busca esta función en main.lua y reemplázala por esta versión:
 function debugHitboxes()
-    love.graphics.setColor(1, 0, 0)
-    love.graphics.rectangle("line", redondear(jugador.hitbox_x) , redondear(jugador.hitbox_y), jugador.ancho, jugador.alto)
-    love.graphics.circle("fill", redondear(jugador.x), redondear(jugador.y), 1)
-
-    for i, enemigo in ipairs(enemigos) do
-        enemigo:Debug()
+    love.graphics.setColor(1, 0, 0) -- Rojo para el jugador
+    -- Ahora usamos self.x y self.y directamente
+    love.graphics.rectangle("line", redondear(jugador.x), redondear(jugador.y), jugador.ancho, jugador.alto)
+    
+    -- Punto verde en el centro real del sprite (para referencia visual)
+    love.graphics.setColor(0, 1, 0)
+    love.graphics.circle("fill", redondear(jugador.x + jugador.ancho/2), redondear(jugador.y + jugador.alto/2), 2)
+    
+    love.graphics.setColor(0, 0, 1) -- Azul para enemigos
+    for i, enemigo in ipairs(enemigos or {}) do
+        if enemigo.x then -- Verificación de seguridad
+            love.graphics.rectangle("line", redondear(enemigo.x), redondear(enemigo.y), enemigo.ancho, enemigo.alto)
+        end
     end
-    love.graphics.setColor(1, 1, 1)
+    love.graphics.setColor(1, 1, 1) -- Restaurar color blanco
 end
 
 function love.load()
-
     -------------------------------------------------
     -- Ventana
     -------------------------------------------------
-
     love.window.setMode(
         ventana.ancho * ventana.escala,
         ventana.alto * ventana.escala
     )
-
     love.graphics.setDefaultFilter(
         "nearest",
         "nearest"
     )
-
     -------------------------------------------------
     -- Mundo físico
     -------------------------------------------------
 
     world = love.physics.newWorld(0, 0, true)
-
     mapa = STI("mapa/bosque1.lua")
-
     mundo = Bump.newWorld(16)  --aqui decia 16
-    --- jugador= Jugador(ventana.ancho/2, ventana.alto/2, 72, mundo)
-
+    
     -------------------------------------------------
     -- Colisiones del mapa
     -------------------------------------------------
@@ -88,13 +89,11 @@ end
     -------------------------------------------------
     -- Escenario
     -------------------------------------------------
-
     CrearEscenario()
 
     -------------------------------------------------
     -- Canvas
     -------------------------------------------------
-
     canvas = love.graphics.newCanvas(
         ventana.ancho,
         ventana.alto
@@ -148,15 +147,15 @@ end
     ventana.mapa_ancho =       mapa.width * mapa.tilewidth
     ventana.mapa_alto =        mapa.height * mapa.tileheight
 end
-
+function love.handlers.modoDebug()
+     depurar = not depurar
+end    
 function redondear(num)
     return math.floor(num + 0.5)
 end
 
 function love.keypressed(key)
-
     if key == "escape" then
-
         MaquinaEstadoGlobal:cambiar(
             'titulo',
             {
@@ -169,10 +168,11 @@ function love.keypressed(key)
     end
 
     if key == "f1" then
-        depurar = not depurar
+        -- depurar = not depurar
+        love.event.push('modoDebug')
     end
     if (key == "X") or (key == "x") then
-       -- exit
+       return
     end
 
     if aura and key == "z" then

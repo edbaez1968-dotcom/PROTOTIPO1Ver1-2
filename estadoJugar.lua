@@ -350,15 +350,15 @@ end
         )
 
         love.graphics.setColor(1,1,1)
-        love.graphics.setFont(miFuentePequena)
-        love.graphics.print("Jugador: x=" .. math.floor(self.jugador.x) .. ", y=" .. math.floor(self.jugador.y), self.jugador.x +8,self.jugador.y + 8)
-    --[[
+        -- love.graphics.setFont(miFuentePequena)
+        love.graphics.print("x=" .. math.floor(self.jugador.x) .. ", y=" .. math.floor(self.jugador.y), self.jugador.x +8,self.jugador.y + 8)
+    
         for _, obj in ipairs(mapa.layers["Colisiones"].objects) do
-            love.graphics.setColor(1,0,0)
+            -- love.graphics.setColor(1,0,0)
 
             love.graphics.rectangle( "line",   obj.x,   obj.y,  obj.width,  obj.height   )
         end
-    ]]
+    --[[]]
     end
 
     ------------------------------------------------
