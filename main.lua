@@ -26,6 +26,26 @@ fuente = nil
 mapa = nil
 camara_principal = nil
 mundo = nil
+--[[
+function debugUI()
+    love.graphics.setColor(0, 1, 0)
+    love.graphics.print("FPS: " .. love.timer.getFPS(), 10, 10)
+    if atrapado then
+        love.graphics.print("ATRAPADO", 100, 10)
+    end
+    love.graphics.setColor(1, 1, 1)
+end
+]]
+function debugHitboxes()
+    love.graphics.setColor(1, 0, 0)
+    love.graphics.rectangle("line", redondear(jugador.hitbox_x) , redondear(jugador.hitbox_y), jugador.ancho, jugador.alto)
+    love.graphics.circle("fill", redondear(jugador.x), redondear(jugador.y), 1)
+
+    for i, enemigo in ipairs(enemigos) do
+        enemigo:Debug()
+    end
+    love.graphics.setColor(1, 1, 1)
+end
 
 function love.load()
 
@@ -51,23 +71,17 @@ function love.load()
 
     mapa = STI("mapa/bosque1.lua")
 
-    mundo = Bump.newWorld(16)
+    mundo = Bump.newWorld(16)  --aqui decia 16
+    --- jugador= Jugador(ventana.ancho/2, ventana.alto/2, 72, mundo)
 
     -------------------------------------------------
     -- Colisiones del mapa
     -------------------------------------------------
 
     if mapa.layers["Colisiones"] then
-    for _, obj in ipairs(
-        mapa.layers["Colisiones"].objects
-    ) do
-        obj.es_pared = true
-        mundo:add(
-            obj,
-            obj.x,
-            obj.y,
-            obj.width,
-            obj.height
+    for _, obj in ipairs( mapa.layers["Colisiones"].objects  ) do
+     obj.es_pared = true
+        mundo:add(    obj,   obj.x,  obj.y,  obj.width, obj.height
         )
     end
 end
@@ -91,7 +105,7 @@ end
         40
     )
 
-    depurar = false
+    depurar = true
     atrapado = false
 
     -------------------------------------------------
@@ -157,6 +171,9 @@ function love.keypressed(key)
     if key == "f1" then
         depurar = not depurar
     end
+    if (key == "X") or (key == "x") then
+       -- exit
+    end
 
     if aura and key == "z" then
         aura.activado = true
@@ -186,14 +203,32 @@ function love.update(dt)
             camara_principal.y = (ventana.mapa_alto - ventana.camara_centro_y)
         end
     end
+ --- limites de camara_principal
+    if camara_principal.x < ventana.ancho * 0.5 then
+        camara_principal.x = ventana.ancho * 0.5
+    end
 
+    if camara_principal.y < ventana.alto * 0.5 then
+        camara_principal.y = ventana.alto * 0.5
+    end
+
+    local mapa_ancho = mapa.width * mapa.tilewidth
+    local mapa_alto  = mapa.height * mapa.tileheight
+
+    if camara_principal.x > (mapa_ancho - ventana.ancho * 0.5) then
+        camara_principal.x = (mapa_ancho - ventana.ancho * 0.5)
+    end
+
+    if camara_principal.y > (mapa_alto - ventana.alto * 0.5) then
+        camara_principal.y = (mapa_alto - ventana.alto * 0.5)
+    end
     world:update(dt)
     MaquinaEstadoGlobal:actualizar(dt)
 end
 
 function love.draw()
-
-    mapa:draw()
+love.graphics.setFont(miFuentePequena)
+    -- mapa:draw()
 
     MaquinaEstadoGlobal:dibujar()
 

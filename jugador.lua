@@ -1,126 +1,113 @@
-Jugador = Class{}
+Class = require 'lib.class'
 
--- Filtro para que el jugador solo choque físicamente con las paredes
-local function filtroJugador(item, other)
-    if other.es_pared or (type(other) == "table" and other.type == "pared") then
-        return "slide"
-    end
-    return nil -- Ignorar enemigos y monedas para la física de movimiento
-end
+Jugador = Class{}
+-- =================== INICIALIZACION ===================
 function Jugador:init(x, y, v, mundo)
     self.sprite = love.graphics.newImage("img/Duende.png")
     self.x = x
-    self.y = y
-    self.inicial_x = x
-    self.inicial_y = y
-
     self.ancho = self.sprite:getWidth()
-    self.alto = self.sprite:getHeight()
-    self.origenX = self.ancho / 2
-    self.origenY = self.alto / 2
-
-    -- Hitbox correctamente posicionada respecto al centro del jugador
-    self.hitbox_x = self.x - self.origenX
-    self.hitbox_y = self.y - self.origenY
-
-    self.velocidad = v
+    self.alto  = self.sprite:getHeight()
+    self.origen_x = self.ancho/2
+    self.origen_y = self.alto/2
+    self.x = x
+    self.y = y
+    self.hitbox_x =  self.x - self.origen_x
+    self.hitbox_y =  self.y - self.origen_y
+    self.velocidad = v * 2
+    self.anterior_x = self.x
+    self.anterior_y = self.y
     self.vidas = 5
-    self.objetivo = 10
+    self.objetivo = 2
     self.derrotados = 0
     self.mundo = mundo
-
-    -- Registrar la hitbox real en Bump desde el primer momento
-    if self.mundo then
-        self.mundo:add(self, self.hitbox_x, self.hitbox_y, self.ancho, self.alto)
-    end
+    self.mundo:add(self, self.hitbox_x, self.hitbox_y, self.ancho, self.alto)
+    self.inmune = false
+    self.tiempoInmune = 1
 end
-
+-- =================== ACTUALIZAR ===================
 function Jugador:Actualizar(dt)
-    local dx, dy = 0, 0
+local anchoMapa =   mapa.width * mapa.tilewidth
+local altoMapa =    mapa.height * mapa.tileheight
+    self.anterior_x = self.x
+    self.anterior_y = self.y
 
-    -- Teclas de dirección (Flechas y WASD)
-    if love.keyboard.isDown("right") or love.keyboard.isDown("d") then
-        dx = dx + (self.velocidad * dt)
-    end
-    if love.keyboard.isDown("left") or love.keyboard.isDown("a") then
-        dx = dx - (self.velocidad * dt)
-    end
-    if love.keyboard.isDown("down") or love.keyboard.isDown("s") then
-        dy = dy + (self.velocidad * dt)
-    end
-    if love.keyboard.isDown("up") or love.keyboard.isDown("w") then
-        dy = dy - (self.velocidad * dt)
-    end
-
-    -- Si no se toca ninguna tecla, no se procesa movimiento
-    if dx == 0 and dy == 0 then
-        return
+    if love.keyboard.isDown("right") then
+        print("right")
+        self.x = self.x + (self.velocidad * dt)
+    elseif love.keyboard.isDown("left") then
+        self.x = self.x - (self.velocidad * dt)
+    elseif love.keyboard.isDown("down") then
+        print("down")
+        self.y = self.y + (self.velocidad * dt)
+    elseif love.keyboard.isDown("up") then
+        print("up")
+        self.y = self.y - (self.velocidad * dt)
     end
 
-    -- Calcular la nueva posición de la hitbox deseada
-    local objetivo_x = self.hitbox_x + dx
-    local objetivo_y = self.hitbox_y + dy
+    self.hitbox_x = self.x - self.origen_x
+    self.hitbox_y = self.y - self.origen_y
+    self.mundo:update(self, self.hitbox_x, self.hitbox_y, self.ancho, self.alto)
 
-    if self.mundo then
-        -- Mover la hitbox mediante Bump
-        local actual_x, actual_y, colisiones, num = self.mundo:move(
-            self,
-            objetivo_x,
-            objetivo_y,
-            filtroJugador
-        )
-
-        -- Sincronizar las coordenadas de la hitbox y del sprite
-        self.hitbox_x = actual_x
-        self.hitbox_y = actual_y
-        self.x = actual_x + self.origenX
-        self.y = actual_y + self.origenY
-    else
-        -- Movimiento sin física si el mundo es nil
-        self.hitbox_x = objetivo_x
-        self.hitbox_y = objetivo_y
-        self.x = self.hitbox_x + self.origenX
-        self.y = self.hitbox_y + self.origenY
+    if self.inmune then
+    self.tiempoInmune =  self.tiempoInmune - dt
+    end
+    if self.tiempoInmune <= 0 then
+        self.inmune = false
     end
 
+    -- límite izquierdo
+    if self.x < self.origen_x then
+    self.x = self.origen_x
+    end
 
-local actual_x, actual_y, colisiones, num = self.mundo:move(
-    self,
-    objetivo_x,
-    objetivo_y,
-    filtroJugador
-)
--- Sincronizar las coordenadas de la hitbox y del sprite
-self.hitbox_x = actual_x
-self.hitbox_y = actual_y
-self.x = actual_x + self.origenX
-self.y = actual_y + self.origenY
+    -- límite superior
+    if self.y < self.origen_y then
+    self.y = self.origen_y
+    end
 
+    -- límite derecho
+    if self.x > (anchoMapa - self.origen_x) then
+    self.x = anchoMapa - self.origen_x
+    end
 
-
+    -- límite inferior
+    if self.y > (altoMapa - self.origen_y) then
+    self.y = altoMapa - self.origen_y
+    end
+    --self:ActualizarHitbox()
 end
-function Jugador:ColisionCon(objeto)
-    if not self.mundo then return false end
-    local hitboxes, cantidad = self.mundo:queryRect(
-        self.hitbox_x, self.hitbox_y, self.ancho, self.alto
-    )
+-- =================== Colision ===================
+function Jugador:Colision()
+    local hitboxes, cantidad = self.mundo:queryRect(self.hitbox_x, self.hitbox_y, self.ancho, self.alto)
+    
     for i = 1, cantidad do
-        if hitboxes[i] == objeto then
-            return true
+        local objeto = hitboxes[i]
+        if objeto ~= self then
+            if objeto.es_enemigo then
+                return true
+            elseif objeto.es_pared then
+                print("Colision Pared",10,10)
+                self.x = self.anterior_x
+                self.y = self.anterior_y
+                self.hitbox_x = self.x - self.origen_x
+                self.hitbox_y = self.y - self.origen_y
+                self.mundo:update(self, self.hitbox_x, self.hitbox_y, self.ancho, self.alto)
+            end
         end
-    end
+    end 
     return false
 end
-
+-- =================== RENDERIZADO ===================
 function Jugador:Dibujar()
-    love.graphics.draw(
-        self.sprite,
-        redondear(self.x),
-        redondear(self.y),
-        0, 1, 1,
-        self.origenX,
-        self.origenY
-    )
+    love.graphics.draw(self.sprite,redondear(self.x),redondear(self.y),0,1,1, self.origen_x, self.origen_y)
 end
+function Jugador:ColisionCon(objetivo)
 
+    return(
+        self.hitbox_x < objetivo.hitbox_x + objetivo.ancho and
+        self.hitbox_x + self.ancho > objetivo.hitbox_x and
+        self.hitbox_y < objetivo.hitbox_y + objetivo.alto and
+        self.hitbox_y + self.alto > objetivo.hitbox_y)
+
+end
 return Jugador

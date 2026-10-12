@@ -11,8 +11,9 @@ function EstadoJugar:init()
     -- Jugador
     ------------------------------------------------
     ----- Por ejemplo, velocidad = 80 o 100 píxeles por segundo
-self.jugador = Jugador(ventana.ancho / 2, ventana.alto / 2, 70, mundo)
-
+ self.jugador = Jugador(ventana.ancho / 2, ventana.alto / 2, 70, mundo)
+-- Prueba posicionarlo en coordenadas seguras del mapa (ej. x = 40, y = 40)
+-- self.jugador = Jugador(40, 40, 70, mundo)
     ------------------------------------------------
     -- Enemigo
     ------------------------------------------------
@@ -20,7 +21,7 @@ self.jugador = Jugador(ventana.ancho / 2, ventana.alto / 2, 70, mundo)
         30,
         30,
         "img/Ogro16x16.png",
-        30,
+        10,
         mundo
     )
 
@@ -109,13 +110,11 @@ function EstadoJugar:actualizar(dt)
     ------------------------------------------------
     -- Actualización de entidades
     ------------------------------------------------
+    
 
     self.jugador:Actualizar(dt)
 
-    self.enemigo:Actualizar(
-        self.jugador,
-        dt
-    )
+    self.enemigo:Actualizar( self.jugador,   dt )
 
     self.moneda:Actualizar(dt)
 camara_principal:lookAt(redondear(self.jugador.x), redondear(self.jugador.y))
@@ -155,19 +154,26 @@ camara_principal:lookAt(redondear(self.jugador.x), redondear(self.jugador.y))
     -- Colisión enemigo
     ------------------------------------------------
 
-    atrapado = self.jugador:ColisionCon(self.enemigo)
+     atrapado = self.jugador:ColisionCon(self.enemigo)
+    -- atrapado = self.jugador:Colision()
+    if atrapado and not self.jugador.inmune  then
+        print("Me atrapo Enemigo",10,60)
+        love.audio.stop(Sfx_hit)
+        love.audio.play(Sfx_hit)
 
-    if atrapado then
-
+        self.jugador.vidas =  self.jugador.vidas - 1
+        self.jugador.inmune = true
+        self.jugador.tiempoInmune = 1
         self.enemigo.x =
-            self.enemigo.inicial_x +
-            math.random(1,60)
+        self.enemigo.inicial_x +
+        math.random(30,80)
 
         self.enemigo.y =
-            self.enemigo.inicial_y +
-            math.random(1,80)
+        self.enemigo.inicial_y +
+        math.random(30,80)
 
-        self.enemigo:ActualizarHitbox()
+    self.enemigo:ActualizarHitbox()
+       
 
         if ataque.activado then
 
@@ -191,9 +197,7 @@ camara_principal:lookAt(redondear(self.jugador.x), redondear(self.jugador.y))
 
             love.audio.play(Sfx_hit)
 
-            self.jugador.vidas =
-                self.jugador.vidas - 1
-
+            
             if self.jugador.vidas <= 0 then
 
                 love.audio.stop(musica)
@@ -211,32 +215,33 @@ camara_principal:lookAt(redondear(self.jugador.x), redondear(self.jugador.y))
     ------------------------------------------------
     -- Colisión moneda
     ------------------------------------------------
+local tocaMoneda =    self.jugador:ColisionCon(   self.moneda    )
+if tocaMoneda then
 
-    local colisionMoneda =
-        self.jugador:ColisionCon( self.moneda )
+    love.audio.play(clink)
 
-    if colisionMoneda then
+    self.jugador.derrotados =    self.jugador.derrotados + 1
 
-        love.audio.stop(clink)
-        love.audio.play(clink)
-
-        self.jugador.derrotados =
-            self.jugador.derrotados + 2
-
-        self.moneda:Reubicar()
-
-        if self.jugador.derrotados >=
+    self.moneda:Reubicar()
+    if self.jugador.derrotados >=
            self.jugador.objetivo
         then
-
             victoria = true
-
             love.audio.stop(musica)
             love.audio.play(svitoria)
+            MaquinaEstadoGlobal:cambiar(
+            'titulo',
+            {
+                titulo = "GANADOOOOOR ! ! !",
+                subtitulo = "Atrapo las Monedas",
+                copyR = "Presione X"
+            }
+        )
 
         end
 
-    end
+end
+
 
 end
 
@@ -245,24 +250,19 @@ function EstadoJugar:dibujar()
     love.graphics.setCanvas(canvas)
 
     love.graphics.clear()
-
-    mapa:drawLayer(
-        mapa.layers["piso"]
-    )
+    camara_principal:attach(0, 0, ventana.ancho,  ventana.alto)
+    mapa:drawLayer(mapa.layers["piso"]    )
+    
+    -- mapa:drawLayer( mapa.layers["Colisiones"]    )
     mapa:drawLayer( mapa.layers["Deco"]    )
-    mapa:drawLayer( mapa.layers["Colisiones"]    )
-    camara_principal:attach(
-        0,
-        0,
-        ventana.ancho,
-        ventana.alto
-    )
+    
 
     ------------------------------------------------
     -- Escenario
     ------------------------------------------------
 if depurar then
-    love.graphics.print("Jugador: x=" .. math.floor(self.jugador.x) .. ", y=" .. math.floor(self.jugador.y), 10, 70)
+    -- love.graphics.setFont(miFuentePequena)
+    -- love.graphics.print("Jugador: x=" .. math.floor(self.jugador.x) .. ", y=" .. math.floor(self.jugador.y), self.jugador.x +10,self.jugador.y + 10)
 end
 
     -- DibujarEscenario()
@@ -274,7 +274,7 @@ end
     self.jugador:Dibujar()
     self.enemigo:Dibujar()
     self.moneda:Dibujar()
-
+    
     ------------------------------------------------
     -- Ataque
     ------------------------------------------------
@@ -331,26 +331,34 @@ end
 
     if depurar then
 
-        love.graphics.setColor(0,1,0)
+        love.graphics.setColor(0,0.8,0)
 
         love.graphics.rectangle(
             "line",
-            self.jugador.hitbox_x,
-            self.jugador.hitbox_y,
+            redondear(self.jugador.hitbox_x),
+            redondear(self.jugador.hitbox_y),
             self.jugador.ancho,
             self.jugador.alto
         )
 
         love.graphics.rectangle(
-            "line",
-            self.enemigo.hitbox_x,
-            self.enemigo.hitbox_y,
-            self.enemigo.ancho,
-            self.enemigo.alto
+        "line",
+        redondear(self.enemigo.hitbox_x),
+        redondear(self.enemigo.hitbox_y),
+        self.enemigo.ancho,
+        self.enemigo.alto  
         )
 
         love.graphics.setColor(1,1,1)
+        love.graphics.setFont(miFuentePequena)
+        love.graphics.print("Jugador: x=" .. math.floor(self.jugador.x) .. ", y=" .. math.floor(self.jugador.y), self.jugador.x +8,self.jugador.y + 8)
+    --[[
+        for _, obj in ipairs(mapa.layers["Colisiones"].objects) do
+            love.graphics.setColor(1,0,0)
 
+            love.graphics.rectangle( "line",   obj.x,   obj.y,  obj.width,  obj.height   )
+        end
+    ]]
     end
 
     ------------------------------------------------
@@ -358,6 +366,7 @@ end
     ------------------------------------------------
 
     camara_principal:detach()
+
 
     ------------------------------------------------
     -- Finalizar canvas
@@ -382,12 +391,8 @@ end
         miFuentePequena
     )
 
-    love.graphics.print(
-        "Vidas: " ..
-        self.jugador.vidas,
-        10,
-        10
-    )
+    love.graphics.print(   "Vidas: " ..
+        self.jugador.vidas,   10,     10   )
 
     love.graphics.print(
         "Objetivo: " ..
@@ -410,11 +415,9 @@ end
 
     if depurar then
 
-        love.graphics.print(
-            "FPS: " ..
-            love.timer.getFPS(),
+        love.graphics.print(     "FPS: " ..    love.timer.getFPS(),
             10,
-            55
+            45
         )
 
     end

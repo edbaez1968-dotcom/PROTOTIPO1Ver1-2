@@ -5,6 +5,7 @@ function MaquinaEstado:init(estados)
         dibujar = function() end,
 		actualizar = function() end,
 		ingresar = function() end,
+        
 		salir = function() end
     }
     self.estados = estados or {}

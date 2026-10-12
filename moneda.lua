@@ -23,12 +23,9 @@ function Moneda:Actualizar(dt)
 end
 
 function Moneda:Reubicar()
-
-    self.x = 10 + math.random(1,130)
-    self.y = 20 + math.random(1,140)
-
+    self.x = 10 + math.random(1,100)
+    self.y = 20 + math.random(1,90)
     self.recogida = false
-
     self:ActualizarHitbox()
 
 end
