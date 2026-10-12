@@ -3,6 +3,7 @@ Class = require 'lib.class'
 STI = require 'lib.sti'
 Camara = require 'lib.Camera'
 Bump = require 'lib.bump'
+Timer = require 'lib.timer'
 
 -- Importar Clases
 require "Entidad"

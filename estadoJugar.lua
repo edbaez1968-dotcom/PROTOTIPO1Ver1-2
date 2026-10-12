@@ -160,18 +160,17 @@ camara_principal:lookAt(redondear(self.jugador.x), redondear(self.jugador.y))
         print("Me atrapo Enemigo",10,60)
         love.audio.stop(Sfx_hit)
         love.audio.play(Sfx_hit)
-
-        self.jugador.vidas =  self.jugador.vidas - 1
-        self.jugador.inmune = true
-        self.jugador.tiempoInmune = 1
-        self.enemigo.x =
-        self.enemigo.inicial_x +
-        math.random(30,80)
-
-        self.enemigo.y =
-        self.enemigo.inicial_y +
-        math.random(30,80)
-
+        self.jugador.color={1,0,0,0.8}
+        if self.jugador.vidas>0 then      
+            Timer.after(2,function()  self.jugador.color={1,1,1,1} end)
+            self.jugador.vidas =  self.jugador.vidas - 1
+            love.event.push('actuaizarVidas',self.jugador.vidas)
+            self.jugador.inmune = true
+            self.jugador.tiempoInmune = 1
+            self.enemigo.x = self.enemigo.inicial_x +   math.random(30,110)
+            self.enemigo.y =self.enemigo.inicial_y +   math.random(50,120)
+        end
+        
     self.enemigo:ActualizarHitbox()
        
 

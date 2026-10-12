@@ -18,6 +18,7 @@ function Jugador:init(x, y, v, mundo)
 
     self.velocidad = v * 2
     self.vidas = 5
+    love.event.push('actuaizarVidas',self.vidas)
     self.objetivo = 2
     self.derrotados = 0
     self.mundo = mundo
@@ -26,7 +27,8 @@ function Jugador:init(x, y, v, mundo)
     self.mundo:add(self, self.x, self.y, self.ancho, self.alto)
     
     self.inmune = false
-    self.tiempoInmune = 1
+    self.tiempoInmune = 2
+    self.color={1,1,1,1}
 end
 
 -- =================== ACTUALIZAR ===================
@@ -74,6 +76,7 @@ function Jugador:Actualizar(dt)
         self.tiempoInmune = self.tiempoInmune - dt
         if self.tiempoInmune <= 0 then
             self.inmune = false
+            self.color={1,1,1,1}
         end
     end
 end
@@ -81,11 +84,9 @@ end
 -- =================== RENDERIZADO ===================
 function Jugador:Dibujar()
     -- Al ser x, y la esquina superior izquierda, no necesitamos origen_x/origen_y aquí
-    love.graphics.draw(
-        self.sprite, 
-        redondear(self.x), 
-        redondear(self.y)
-    )
+    love.graphics.setColor(self.color)
+    love.graphics.draw(       self.sprite,    redondear(self.x),   redondear(self.y)    )
+    love.graphics.setColor(1,1,1)
 end
 
 -- =================== COLISIONES DE LÓGICA DE JUEGO ===================

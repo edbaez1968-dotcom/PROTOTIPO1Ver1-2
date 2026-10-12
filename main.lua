@@ -26,6 +26,7 @@ fuente = nil
 mapa = nil
 camara_principal = nil
 mundo = nil
+textoVida=" "
 --[[
 function debugUI()
     love.graphics.setColor(0, 1, 0)
@@ -63,14 +64,10 @@ function love.load()
         ventana.ancho * ventana.escala,
         ventana.alto * ventana.escala
     )
-    love.graphics.setDefaultFilter(
-        "nearest",
-        "nearest"
-    )
+    love.graphics.setDefaultFilter(    "nearest",  "nearest"  )
     -------------------------------------------------
     -- Mundo físico
     -------------------------------------------------
-
     world = love.physics.newWorld(0, 0, true)
     mapa = STI("mapa/bosque1.lua")
     mundo = Bump.newWorld(16)  --aqui decia 16
@@ -85,7 +82,14 @@ function love.load()
         mundo:add(    obj,   obj.x,  obj.y,  obj.width, obj.height
         )
     end
+    function UIVidas(vidas)
+       textoVida = "Vidas: " .. vidas
+   end
+   
+   -- Registrar el evento personalizado
+   love.handlers.actuaizarVidas = UIVidas
 end
+
     -------------------------------------------------
     -- Escenario
     -------------------------------------------------
@@ -231,5 +235,11 @@ love.graphics.setFont(miFuentePequena)
     -- mapa:draw()
 
     MaquinaEstadoGlobal:dibujar()
+    if (derrota == false) and  (victoria == false) then
+        love.graphics.print(textoVida,300,10)
+    else
+        love.graphics.print("            ",300,10)
+    end
+    
 
 end
