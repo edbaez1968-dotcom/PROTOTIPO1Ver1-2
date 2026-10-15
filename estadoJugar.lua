@@ -163,7 +163,9 @@ camara_principal:lookAt(redondear(self.jugador.x), redondear(self.jugador.y))
         self.jugador.color={1,0,0,0.8}
         if self.jugador.vidas>0 then      
             Timer.after(2,function()  self.jugador.color={1,1,1,1} end)
-            self.jugador.vidas =  self.jugador.vidas - 1
+            -- self.jugador.vidas =  self.jugador.vidas - 1
+            -- EventManager:notificar( "JUGADOR_DANADO",  { jugador = self.jugador,  dano = 1  })
+            EventManager:notificar( "JUGADOR_DANADO",  { jugador = self.jugador, enemigo = self.enemigo, dano = 1 })
             love.event.push('actuaizarVidas',self.jugador.vidas)
             self.jugador.inmune = true
             self.jugador.tiempoInmune = 1
@@ -217,9 +219,15 @@ camara_principal:lookAt(redondear(self.jugador.x), redondear(self.jugador.y))
 local tocaMoneda =    self.jugador:ColisionCon(   self.moneda    )
 if tocaMoneda then
 
-    love.audio.play(clink)
-
-    self.jugador.derrotados =    self.jugador.derrotados + 1
+    --love.audio.play(clink)
+    --self.jugador.derrotados =    self.jugador.derrotados + 1
+    EventManager:notificar(
+        "MONEDA_RECOGIDA",
+        {
+            jugador = self.jugador,
+            moneda = self.moneda
+        }
+    )
 
     self.moneda:Reubicar()
     if self.jugador.derrotados >=

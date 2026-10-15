@@ -19,7 +19,16 @@ require "Camara"
  require "estadoJugar"
  require "estadoTitulo"
  require "estadoDerrota"
+ require "estadoVictoria"
  require "maquinaEstado"
+
+ require "EventManager"
+ require "OyentePuntuacion"
+ require "OyenteVida"
+ require "OyenteAudio"
+ require "OyenteGameOver"
+ require "OyenteVictoria"
+
 
 
 

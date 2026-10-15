@@ -82,13 +82,14 @@ function love.load()
         mundo:add(    obj,   obj.x,  obj.y,  obj.width, obj.height
         )
     end
+    end
     function UIVidas(vidas)
        textoVida = "Vidas: " .. vidas
-   end
+    end
    
    -- Registrar el evento personalizado
    love.handlers.actuaizarVidas = UIVidas
-end
+
 
     -------------------------------------------------
     -- Escenario
@@ -111,6 +112,59 @@ end
     depurar = true
     atrapado = false
 
+    puntuacionListener =    OyentePuntuacion()
+    vidaListener =   OyenteVida()
+    audioListener =    OyenteAudio()
+    gameOverListener =    OyenteGameOver()
+    victoriaListener =    OyenteVictoria()
+    -- function love.load()
+
+    -- Crear observadores
+
+    puntuacionListener =  OyentePuntuacion()
+
+    vidaListener =    OyenteVida()
+
+    audioListener =   OyenteAudio()
+
+    gameOverListener =   OyenteGameOver()
+
+    victoriaListener =  OyenteVictoria()
+
+    -- Registrar suscripciones
+
+    EventManager:suscribir(
+        "MONEDA_RECOGIDA",
+        puntuacionListener
+    )
+
+    EventManager:suscribir(
+        "MONEDA_RECOGIDA",
+        audioListener
+    )
+
+    EventManager:suscribir(
+        "MONEDA_RECOGIDA",
+        victoriaListener
+    )
+
+    EventManager:suscribir(
+        "JUGADOR_DANADO",
+        vidaListener
+    )
+
+    EventManager:suscribir(
+        "JUGADOR_DANADO",
+        audioListener
+    )
+
+    EventManager:suscribir(
+        "JUGADOR_DANADO",
+        gameOverListener
+    )
+
+
+
     -------------------------------------------------
     -- Máquina de estados
     -------------------------------------------------
@@ -124,7 +178,9 @@ end
         ['titulo'] = function()
             return EstadoTitulo()
         end,
-
+        ['victoria'] = function()
+        return EstadoVictoria()
+        end,
         ['derrota'] = function()
             return EstadoDerrota()
         end
