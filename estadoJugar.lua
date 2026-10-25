@@ -1,6 +1,7 @@
 EstadoJugar = Class { __includes = Estado }
 
 function EstadoJugar:init()
+    self.monedas = {}
 
     love.graphics.setColor(1,1,1)
 -- Reiniciar condiciones de estado de juego
@@ -95,7 +96,9 @@ end
 
 function EstadoJugar:ingresar()
 end
-
+function EstadoJugar:entrar()   -- ojo, puede ser ingresar y no entrar
+    self:IniciarSpawner()
+end
 function EstadoJugar:salir()
 end
 

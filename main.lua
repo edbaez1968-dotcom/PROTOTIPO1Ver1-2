@@ -283,6 +283,8 @@ function love.update(dt)
         camara_principal.y = (mapa_alto - ventana.alto * 0.5)
     end
     world:update(dt)
+    -- Agrego manejo Corrutina
+    CoroutineManager:Actualizar(dt)
     MaquinaEstadoGlobal:actualizar(dt)
 end
 
