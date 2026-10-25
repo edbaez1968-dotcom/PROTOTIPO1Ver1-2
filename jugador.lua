@@ -99,5 +99,38 @@ function Jugador:ColisionCon(objetivo)
         self.y + self.alto > objetivo.y
     )
 end
+-- =================== Invulnerabilidad DEL JUGADOR ===================
+-- Esta función se usa para Invulnerabilidad temporal del jugador
+function Jugador:ActivarInvulnerabilidad()
 
+    local co = coroutine.create(
+
+        function()
+
+            self.inmune = true
+
+            print("Invulnerable")
+
+            local tiempo = 0
+
+            while tiempo < 1.5 do
+
+                local dt =
+                    coroutine.yield()
+
+                tiempo =
+                    tiempo + dt
+
+            end
+
+            self.inmune = false
+
+            print("Fin Invulnerabilidad")
+
+        end
+    )
+
+    CoroutineManager:Agregar(co)
+
+end
 return Jugador

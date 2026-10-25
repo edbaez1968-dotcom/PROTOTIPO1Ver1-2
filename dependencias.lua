@@ -29,6 +29,8 @@ require "camara"
  require "OyenteGameOver"
  require "OyenteVictoria"
 
+ require "CoroutineManager"
+
 
 
 

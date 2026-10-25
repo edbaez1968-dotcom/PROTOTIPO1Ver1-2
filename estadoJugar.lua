@@ -431,4 +431,62 @@ end
 
 end
 
+------------------------------------------------
+-- CORRUTINA  SPAWNER DE MONEDAS
+------------------------------------------------
+
+function EstadoJugar:IniciarSpawner()
+
+    local co = coroutine.create(
+
+        function()
+
+            while true do
+
+                local tiempo = 0
+
+                while tiempo < 10 do
+
+                    local dt =
+                        coroutine.yield()
+
+                    tiempo =
+                        tiempo + dt
+
+                end
+
+                print(
+                    "Nueva moneda"
+                )
+
+                local nuevaMoneda =
+                    Moneda(
+
+                    math.random(
+                        64,
+                        1500
+                    ),
+
+                    math.random(
+                        64,
+                        900
+                    ),
+
+                    "graficos/moneda.png"
+
+                )
+
+                table.insert(
+                    self.monedas,
+                    nuevaMoneda
+                )
+
+            end
+
+        end
+    )
+
+    CoroutineManager:Agregar(co)
+
+end
 return EstadoJugar

@@ -23,7 +23,8 @@ function OyenteVida:onNotify(
     jugador.vidas =
         jugador.vidas - (datos.dano or 1)
 
-    jugador.inmune = true
+    -- jugador.inmune = true
+    jugador:ActivarInvulnerabilidad()
     jugador.tiempoInmune = 1
 
     print(
