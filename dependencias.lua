@@ -1,7 +1,7 @@
 -- Incluye librería para manejar clase
 Class = require 'lib.class'
 STI = require 'lib.sti'
-Camara = require 'lib.Camera'
+Camara = require 'lib.camera'
 Bump = require 'lib.bump'
 Timer = require 'lib.timer'
 
@@ -12,7 +12,7 @@ require "enemigo"
 require "moneda"
 require "escenario"
 require "animaciones"
-require "Camara"
+require "camara"
 -- Importar Estados
 -- estados ( game states)son las distintas pantallas, fases o modos lógicos en los que se puede encontrar un juego
  require "estado"
