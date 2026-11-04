@@ -5,16 +5,16 @@ function OyenteVictoria:onNotify(
     datos
 )
 
-    if evento == "MONEDA_RECOGIDA" then
+    if evento ~= "MONEDA_RECOGIDA" then
+        return
+    end
 
-        if datos.jugador.derrotados >=
-           datos.jugador.objetivo then
+    if datos.jugador.derrotados >=
+       datos.jugador.objetivo then
 
-            MaquinaEstadoGlobal:cambiar(
-                "victoria"
-            )
-
-        end
+        MaquinaEstadoGlobal:cambiar(
+            "victoria"
+        )
 
     end
 

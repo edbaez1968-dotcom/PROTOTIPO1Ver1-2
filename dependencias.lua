@@ -13,6 +13,7 @@ require "moneda"
 require "escenario"
 require "animaciones"
 require "camara"
+require "UI"
 -- Importar Estados
 -- estados ( game states)son las distintas pantallas, fases o modos lógicos en los que se puede encontrar un juego
  require "estado"
@@ -22,12 +23,16 @@ require "camara"
  require "estadoVictoria"
  require "maquinaEstado"
 
+ 
  require "EventManager"
+ 
  require "OyentePuntuacion"
  require "OyenteVida"
  require "OyenteAudio"
  require "OyenteGameOver"
  require "OyenteVictoria"
+
+ require "CoroutineManager"
 
 
 

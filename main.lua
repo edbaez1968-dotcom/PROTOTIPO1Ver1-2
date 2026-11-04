@@ -65,6 +65,11 @@ function love.load()
         ventana.alto * ventana.escala
     )
     love.graphics.setDefaultFilter(    "nearest",  "nearest"  )
+    love.graphics.setBackgroundColor(
+        0.25,
+        0.55,
+        0.25
+    )
     -------------------------------------------------
     -- Mundo físico
     -------------------------------------------------
@@ -112,23 +117,15 @@ function love.load()
     depurar = true
     atrapado = false
 
-    puntuacionListener =    OyentePuntuacion()
-    vidaListener =   OyenteVida()
-    audioListener =    OyenteAudio()
-    gameOverListener =    OyenteGameOver()
-    victoriaListener =    OyenteVictoria()
+    
     -- function love.load()
 
     -- Crear observadores
 
     puntuacionListener =  OyentePuntuacion()
-
     vidaListener =    OyenteVida()
-
     audioListener =   OyenteAudio()
-
     gameOverListener =   OyenteGameOver()
-
     victoriaListener =  OyenteVictoria()
 
     -- Registrar suscripciones
@@ -283,6 +280,8 @@ function love.update(dt)
         camara_principal.y = (mapa_alto - ventana.alto * 0.5)
     end
     world:update(dt)
+    -- Agrego manejo Corrutina
+    CoroutineManager:Actualizar(dt)
     MaquinaEstadoGlobal:actualizar(dt)
 end
 
