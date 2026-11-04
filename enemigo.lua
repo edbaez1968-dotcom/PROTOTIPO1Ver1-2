@@ -16,9 +16,12 @@ function Enemigo:init(x, y, img, v, mundo)
     self.mundo = mundo
     self.es_enemigo = true
     self.mundo:add(self, self.hitbox_x, self.hitbox_y, self.ancho, self.alto)
+    self:Patrullar()
+
 
     
 end
+
 function Enemigo:Actualizar(jugador, dt)
     local dx = jugador.x - self.x
     local dy = jugador.y - self.y
@@ -37,9 +40,47 @@ function Enemigo:Actualizar(jugador, dt)
     self.mundo:update(
         self,  self.hitbox_x,  self.hitbox_y,  self.ancho,  self.alto )
 
-end
+    end
 
 
 end
+function Enemigo:Patrullar()
 
+    local co = coroutine.create(function()
+
+        while true do
+
+            -- mover hacia la derecha
+            self.destinoX = self.x + 200
+            self.destinoY = self.y
+
+            local tiempo = 0
+
+            while tiempo < 3 do
+
+                local dt = coroutine.yield()
+                tiempo = tiempo + dt
+
+            end
+
+            -- mover hacia la izquierda
+            self.destinoX = self.x - 200
+            self.destinoY = self.y
+
+            tiempo = 0
+
+            while tiempo < 3 do
+
+                local dt = coroutine.yield()
+                tiempo = tiempo + dt
+
+            end
+
+        end
+
+    end)
+
+    CoroutineManager:Agregar(co)
+
+end
 return Enemigo

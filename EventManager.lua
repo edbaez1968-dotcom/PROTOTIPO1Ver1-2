@@ -1,17 +1,53 @@
-EventManager = {}
+EventManager = {
 
-EventManager.listeners = {}
+    listeners = {}
 
-function EventManager:suscribir(evento, oyente)
+}
 
-    if not self.listeners[evento] then
+function EventManager:suscribir(
+    evento,
+    observador
+)
+
+    if self.listeners[evento] == nil then
+
         self.listeners[evento] = {}
+
     end
 
     table.insert(
         self.listeners[evento],
-        oyente
+        observador
     )
+
+end
+
+function EventManager:desuscribir(
+    evento,
+    observador
+)
+
+    local lista =
+        self.listeners[evento]
+
+    if not lista then
+        return
+    end
+
+    for i, obj in ipairs(lista) do
+
+        if obj == observador then
+
+            table.remove(
+                lista,
+                i
+            )
+
+            break
+
+        end
+
+    end
 
 end
 
@@ -20,20 +56,31 @@ function EventManager:notificar(
     datos
 )
 
-    if not self.listeners[evento] then
+    local lista =
+        self.listeners[evento]
+
+    if not lista then
         return
     end
 
-    for _, oyente in ipairs(
-        self.listeners[evento]
-    ) do
+    for _, observador in ipairs(lista) do
 
-        oyente:onNotify(
-            evento,
-            datos
-        )
+        if observador.onNotify then
+
+            observador:onNotify(
+                evento,
+                datos
+            )
+
+        end
 
     end
+
+end
+
+function EventManager:limpiar()
+
+    self.listeners = {}
 
 end
 

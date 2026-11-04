@@ -19,7 +19,7 @@ function Jugador:init(x, y, v, mundo)
     self.velocidad = v * 2
     self.vidas = 5
     love.event.push('actuaizarVidas',self.vidas)
-    self.objetivo = 2
+    self.objetivo = 4
     self.derrotados = 0
     self.mundo = mundo
     

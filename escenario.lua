@@ -51,17 +51,13 @@ function CrearEscenario()
     suelo_bosque = Estructuras:Nuevo(ancho / 2, alto - 4, "img/SueloBosque.png", tag_suelo, 1, 1)
 
     -- Ramas Flotantes en posiciones aleatorias dentro de los límites jugables 0.30, 0.50
-    rama_central = Estructuras:Nuevo(math.random(30, ancho - 30), math.random(30, alto - 40), "img/RamaFlotante.png", tag_rama,1,1 )
-    rama_superior_izq = Estructuras:Nuevo(math.random(25, 60), math.random(25, 50), "img/RamaFlotante.png", tag_rama, 0.25, 0.50)
-    rama_superior_der = Estructuras:Nuevo(math.random(100, 135), math.random(25, 50), "img/RamaFlotante.png", tag_rama, 0.50, 0.90)
-    rama_inferior_izq = Estructuras:Nuevo(math.random(25, 60), math.random(110, 140), "img/RamaFlotante.png", tag_rama, 0.25, 0.50)
-    rama_inferior_der = Estructuras:Nuevo(math.random(100, 135), math.random(110, 140), "img/RamaFlotante.png", tag_rama, 0.25, 0.50)
+    
 
     -- Hongos Gigantes en posiciones aleatorias con el DOBLE de tamaño (0.40, 0.80)  doble: 0.40, 0.80
     hongo_izq = Estructuras:Nuevo(math.random(20, ancho / 2 - 10), math.random(30, alto - 50), "img/HongoGigante.png", tag_hongo, 1, 1)
     hongo_der = Estructuras:Nuevo(math.random(ancho / 2 + 10, ancho - 20), math.random(30, alto - 50), "img/HongoGigante.png", tag_hongo, 1, 1)
     -- Moneadas de plata y oro
-     moneda_plata = Estructuras:Nuevo(math.random(50, ancho / 2 - 10), math.random(100, alto - 50), "img/monedaPlata16x16.png", tag_hongo,  0.45,  0.45)
+    -- moneda_plata = Estructuras:Nuevo(math.random(50, ancho / 2 - 10), math.random(100, alto - 50), "img/monedaPlata16x16.png", tag_hongo,  0.45,  0.45)
     -- moneda_oro = Estructuras:Nuevo(math.random(ancho / 2 + 10, ancho - 20), math.random(70, alto - 30), "img/MonedaOro16x16.png", tag_hongo,0.45,  0.45)
 end
 
